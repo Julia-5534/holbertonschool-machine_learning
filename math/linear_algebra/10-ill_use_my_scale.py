@@ -3,7 +3,5 @@
 
 
 def np_shape(matrix):
-    """Calculates the shape of a numpy.ndarray"""
-    rows = len(matrix)
-    cols = len(matrix[0]) if matrix else 0
-    return (rows, cols)
+    """Calculates the shape of a matrix"""
+    return tuple(matrix.shape)
