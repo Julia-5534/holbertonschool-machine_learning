@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Task 2"""
+
+
 def matrix_shape(matrix):
     """Calculates shape of a matrix"""
     shape = []
