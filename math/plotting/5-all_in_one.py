@@ -7,7 +7,7 @@ y0 = np.arange(0, 11) ** 3
 plt.subplot(3, 2, 1)
 plt.plot(y0, color='red')
 plt.xticks(np.arange(0, 11, 2), fontsize='x-small')
-plt.yticks(fontsize='x-small')
+plt.yticks([0, 500, 1000], fontsize='x-small')
 plt.xlim(0, 10)
 plt.ylim(0, 1000)
 
@@ -56,7 +56,7 @@ plt.legend(loc='upper right', fontsize='x-small')
 plt.xticks(np.arange(0, 21000, 5000), fontsize='x-small')
 plt.yticks(fontsize='x-small')
 plt.xlim(0, 20000)
-plt.ylim([0,1])
+plt.ylim([0, 1])
 
 # Fifth plot
 np.random.seed(5)
@@ -67,7 +67,9 @@ plt.xlabel('Grades', fontsize='x-small')
 plt.ylabel('Number of Students', fontsize='x-small')
 plt.title('Project A', fontsize='x-small')
 plt.xticks(range(0, 101, 10), fontsize='x-small')
-plt.yticks(fontsize='x-small')
+plt.yticks(range(0, 31, 10), fontsize='x-small')
+plt.xlim(0, 100)
+plt.ylim(0, 30)
 
 # Overall figure
 plt.subplots_adjust(wspace=0.4, hspace=0.8)

@@ -8,8 +8,8 @@ np.random.seed(5)
 x, y = np.random.multivariate_normal(mean, cov, 2000).T
 y += 180
 
-plt.scatter(x, y, color='magenta')  # Plot the data as magenta points
-plt.xlabel('Height (in)')  # Set the x-axis label
-plt.ylabel('Weight (lbs)')  # Set the y-axis label
-plt.title("Men's Height vs Weight")  # Set the plot title
-plt.show()  # Display the plot
+plt.scatter(x, y, color='magenta')  # Plot data as magenta points
+plt.xlabel('Height (in)')  # Set x-axis label
+plt.ylabel('Weight (lbs)')  # Set y-axis label
+plt.title("Men's Height vs Weight")  # Set plot title
+plt.show()  # Display plot
