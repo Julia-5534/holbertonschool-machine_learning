@@ -9,8 +9,8 @@ def poly_integral(poly, C=0):
             or not isinstance(C, int):
         return None
 
-    if len(poly) == 1:
-        return [C, poly[0]]
+    if len(poly) == 1 and poly[0] == 0:
+        return [C]
 
     integral = [coeff // (index + 1)
                 if coeff % (index + 1) == 0 else coeff / (index + 1)
