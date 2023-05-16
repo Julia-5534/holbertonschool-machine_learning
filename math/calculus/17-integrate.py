@@ -10,7 +10,7 @@ def poly_integral(poly, C=0):
         return None
 
     if len(poly) == 1:
-        return [C]
+        return [C, poly[0]]
 
     integral = [coeff // (index + 1)
                 if coeff % (index + 1) == 0 else coeff / (index + 1)
