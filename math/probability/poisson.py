@@ -29,8 +29,19 @@ class Poisson:
         if k < 0:
             return 0
         else:
-            e_to_the_power = -self.lambtha
-            product = 1
-            for i in range(1, k+1):
-                product *= self.lambtha / i
-            return product * pow(2.71828, e_to_the_power)
+            product = (
+                (self.lambtha ** k)
+                * pow(2.71828, -self.lambtha)
+                / self.factorial(k)
+            )
+            return product
+
+    def factorial(self, n):
+        """Accuracy of Factorial"""
+        if n == 0:
+            return 1
+        else:
+            result = 1
+            for i in range(1, n + 1):
+                result *= i
+            return result
