@@ -31,7 +31,7 @@ class Poisson:
         else:
             product = (
                 (self.lambtha ** k)
-                * pow(2.71828, -self.lambtha)
+                * pow(2.7182818285, -self.lambtha)
                 / self.factorial(k)
             )
             return product
