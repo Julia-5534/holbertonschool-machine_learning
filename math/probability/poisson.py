@@ -24,7 +24,7 @@ class Poisson:
         return total / n
 
     def pmf(self, k):
-        """Calculates value of PMF for given number of 'successes'"""
+        """Calculates value of PMF for given # of 'successes'"""
         k = int(k)
         if k < 0:
             return 0
