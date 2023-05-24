@@ -45,3 +45,14 @@ class Poisson:
             for i in range(1, n + 1):
                 result *= i
             return result
+
+    def cdf(self, k):
+        """Calculates value of CDF for given # of 'successes'"""
+        k = int(k)
+        if k < 0:
+            return 0
+        else:
+            cdf = 0
+            for i in range(k + 1):
+                cdf += self.pmf(i)
+            return cdf
