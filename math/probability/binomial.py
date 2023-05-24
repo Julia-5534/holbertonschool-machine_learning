@@ -18,10 +18,8 @@ class Binomial:
                 raise TypeError("data must be a list")
             if len(data) < 2:
                 raise ValueError("data must contain multiple values")
-            self.n, self.p = self.estimate_parameters(data)
-
-    def estimate_parameters(self, data):
-        """Estimates Parameters"""
-        p = sum(data) / len(data)
-        n = round(sum(data) * p)
-        return int(n), float(p)
+            mean = sum(data)/len(data)
+            vary = sum([(result - mean)**2 for result in data])/len(data)
+            self.p = 1 - (vary / mean)
+            self.n = round((sum(data)/self.p)/len(data))
+            self.p = float(mean/self.n)
