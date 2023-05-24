@@ -21,7 +21,7 @@ class Binomial:
             self.n, self.p = self.estimate_parameters(data)
 
     def estimate_parameters(self, data):
+        """Estimates Parameters"""
         p = sum(data) / len(data)
         n = round(p * len(data))
-        p = n / len(data)
         return int(n), float(p)
