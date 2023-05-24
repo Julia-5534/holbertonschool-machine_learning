@@ -25,7 +25,7 @@ class Binomial:
             self.p = float(mean / self.n)
 
     def pmf(self, k):
-        """Calculates the value of the PMF for a given number of successes"""
+        """Calculates value of PMF for given # of successes"""
         k = int(k)  # Convert k to an integer
         if k < 0 or k > self.n:
             return 0  # If k is out of range, return 0
@@ -33,21 +33,31 @@ class Binomial:
         probability = self._calculate_probability(k)
         return coefficient * probability
 
+    def cdf(self, k):
+        """Calculates value of CDF for given # of successes"""
+        k = int(k)  # Convert k to an integer
+        if k < 0:
+            return 0  # If k is out of range, return 0
+        cdf_value = 0
+        for i in range(k + 1):
+            cdf_value += self.pmf(i)
+        return cdf_value
+
     def _calculate_coefficient(self, k):
-        """Calculates the coefficient of the binomial distribution"""
+        """Calculates Coefficient of Binomial Distribution"""
         numerator = self._factorial(self.n)
         denominator = self._factorial(self.n - k) * self._factorial(k)
         coefficient = numerator / denominator
         return coefficient
 
     def _calculate_probability(self, k):
-        """Calculates the probability of k successes"""
+        """Calculates Probability of k successes"""
         probability = self.p ** k * (1 - self.p) ** (self.n - k)
         return probability
 
     @staticmethod
     def _factorial(n):
-        """Calculates the factorial of a number"""
+        """Calculates factorial of a number"""
         factorial = 1
         for i in range(1, n + 1):
             factorial *= i
