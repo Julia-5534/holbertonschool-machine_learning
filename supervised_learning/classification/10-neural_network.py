@@ -49,6 +49,7 @@ class NeuralNetwork:
         return self.__A2
 
     def forward_prop(self, X):
+        """Forward Propagation"""
         Z1 = np.dot(self.W1, X) + self.b1
         self.__A1 = 1 / (1 + np.exp(-Z1))
         Z2 = np.dot(self.W2, self.A1) + self.b2
