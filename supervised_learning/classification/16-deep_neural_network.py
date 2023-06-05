@@ -5,9 +5,7 @@ import numpy as np
 
 
 class DeepNeuralNetwork:
-    """DeepNeuralNetwork"""
     def __init__(self, nx, layers):
-        """Initializes DeepNeuralNetwork"""
         if not isinstance(nx, int):
             raise TypeError("nx must be an integer")
         if nx < 1:
@@ -21,16 +19,19 @@ class DeepNeuralNetwork:
         self.__cache = {}
         self.__weights = {}
 
-        for lix in range(1, self.__L + 1):
-            if lix == 1:
-                self.__weights['W' + str(lix)] = np.random.randn(layers[lix-1],
-                                                                 nx) \
-                                                     * np.sqrt(2/nx)
+        for lix in range(self.__L):
+            if not isinstance(layers[lix], int) or layers[lix] < 1:
+                raise TypeError("layers must be a list of positive integers")
+
+            if lix == 0:
+                self.__weights['W' + str(lix + 1)] = \
+                    np.random.randn(layers[lix], nx) * np.sqrt(2 / nx)
             else:
-                self.__weights['W' + str(lix)] = \
-                    np.random.randn(layers[lix-1], layers[lix-2]) \
-                    * np.sqrt(2/layers[lix-2])
-            self.__weights['b' + str(lix)] = np.zeros((layers[lix-1], 1))
+                self.__weights['W' + str(lix + 1)] = \
+                    np.random.randn(layers[lix], layers[lix - 1]) * np.sqrt(
+                    2 / layers[lix - 1])
+
+            self.__weights['b' + str(lix + 1)] = np.zeros((layers[lix], 1))
 
     @property
     def L(self):
