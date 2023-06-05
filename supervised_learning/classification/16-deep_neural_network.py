@@ -26,8 +26,7 @@ class DeepNeuralNetwork:
             if lix == 0:
                 self.__weights['W' + str(lix + 1)] = np.random.randn(layers[lix], nx) * np.sqrt(2 / nx)
             else:
-                self.__weights['W' + str(lix + 1)] = np.random.randn(layers[lix], layers[lix - 1]) \
-                    * np.sqrt(2 / layers[lix - 1])
+                self.__weights['W' + str(lix + 1)] = np.random.randn(layers[lix], layers[lix - 1]) * np.sqrt(2 / layers[lix - 1])
 
             self.__weights['b' + str(lix + 1)] = np.zeros((layers[lix], 1))
 
