@@ -10,6 +10,7 @@ def one_hot_encode(Y, classes):
         return None
 
     m = len(Y)
+    classes = int(classes)  # Convert classes to an integer
     oh_mat = np.zeros((classes, m))
 
     for i in range(m):
