@@ -54,14 +54,9 @@ class DeepNeuralNetwork:
     def activate(self, Z):
         """Applies the activation function to Z"""
         if self.__activation == 'sig':
-            # sig activation for hidden layers
-            self.__cache["A{}".format(i + 1)] = \
-                1 / (1 + np.exp(-Z))
-
-        if self.__activation == 'tanh':
-            # tanh activation for hidden layers
-            self.__cache["A{}".format(i + 1)] = \
-                (np.exp(Z) - np.exp(-Z)) / (np.exp(Z) + np.exp(-Z))
+            return 1 / (1 + np.exp(-Z))
+        elif self.__activation == 'tanh':
+            return np.tanh(Z)
 
     def forward_prop(self, X):
         """
