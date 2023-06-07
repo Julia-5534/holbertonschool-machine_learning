@@ -153,74 +153,51 @@ class DeepNeuralNetwork:
             raise TypeError("alpha must be a float")
         if alpha <= 0:
             raise ValueError("alpha must be positive")
-        if type(step) is not int:
-            raise TypeError("step must be an integer")
-        if step <= 0 or step > iterations:
-            raise ValueError("step must be positive and <= iterations")
 
-        costs = []
-        iterations_list = []
-
-        for i in range(iterations + 1):
+        graphx = []
+        graphy = []
+        for i in range(0, iterations):
             A, cache = self.forward_prop(X)
-            cost = self.cost(Y, A)
-            if i % step == 0 or i == iterations:
-                if verbose:
-                    print("Cost after {} iterations: {}".format(i, cost))
-                if graph:
-                    costs.append(cost)
-                    iterations_list.append(i)
-
-            self.gradient_descent(Y, cache, alpha)
-
+            self.gradient_descent(Y, self.__cache, alpha)
+            if verbose:
+                if i == 0 or i % step == 0:
+                    print("Cost after {} iterations: {}"
+                          .format(i, self.cost(Y, A)))
+            if graph:
+                if i == 0 or i % step == 0:
+                    current_cost = self.cost(Y, A)
+                    graphy.append(current_cost)
+                    graphx.append(i)
+                plt.plot(graphx, graphy)
+                plt.title("Training Cost")
+                plt.xlabel("iteration")
+                plt.ylabel("cost")
+            if verbose or graph:
+                if type(step) is not int:
+                    raise TypeError("step must be in integer")
+                if step <= 0 or step > iterations:
+                    raise ValueError("step must be positive and <= iterations")
         if graph:
-            plt.plot(iterations_list, costs, 'b-')
-            plt.xlabel('Iteration')
-            plt.ylabel('Cost')
-            plt.title('Training Cost')
             plt.show()
-
-        evaluation = self.evaluate(X, Y)
-        return evaluation
+        return (self.evaluate(X, Y))
 
     def save(self, filename):
-        """
-        Saves the instance object to a file in pickle format.
+        '''Save obj as pickle file'''
+        if not filename.endswith(".pkl"):
+            filename += ".pkl"
 
-        Args:
-            filename (str): The file to which the object should be saved.
-
-        Returns:
-            None
-
-        Raises:
-            None
-        """
-        if filename.endswith('.pkl') is not True:
-            filename += '.pkl'
-        with open(filename, 'wb') as file:
+        with open(filename, "wb") as file:
             pickle.dump(self, file)
 
     @staticmethod
     def load(filename):
-        """
-        Loads a pickled DeepNeuralNetwork object from a file.
-
-        Args:
-            filename (str): The file from which the object should be loaded.
-
-        Returns:
-            object: The loaded DeepNeuralNetwork object, or None if the file
-                    doesn't exist or loaded object is not of the correct type.
-
-        Raises:
-            None
-        """
+        '''Loads pickled DNN obj'''
         try:
-            with open(filename, 'rb') as file:
+            with open(filename, "rb") as file:
                 obj = pickle.load(file)
-            if not isinstance(obj, DeepNeuralNetwork):
-                return None
-            return obj
+                if isinstance(obj, DeepNeuralNetwork):
+                    return obj
+                else:
+                    return None
         except FileNotFoundError:
             return None
