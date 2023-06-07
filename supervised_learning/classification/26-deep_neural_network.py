@@ -31,18 +31,6 @@ class DeepNeuralNetwork:
             self.__weights["b{}".format(lix)] = np.zeros((layer_size, 1))
             nx = layer_size
 
-    @property
-    def L(self):
-        return self.__L
-
-    @property
-    def cache(self):
-        return self.__cache
-
-    @property
-    def weights(self):
-        return self.__weights
-
     def forward_prop(self, X):
         """
         Calculates the forward propagation of the neural network.
@@ -201,3 +189,15 @@ class DeepNeuralNetwork:
                     return None
         except FileNotFoundError:
             return None
+
+    @property
+    def L(self):
+        return self.__L
+
+    @property
+    def cache(self):
+        return self.__cache
+
+    @property
+    def weights(self):
+        return self.__weights

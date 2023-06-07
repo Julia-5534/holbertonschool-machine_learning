@@ -174,8 +174,8 @@ class DeepNeuralNetwork:
 
         if graph:
             plt.plot(iterations_list, costs, 'b-')
-            plt.xlabel('Iteration')
-            plt.ylabel('Cost')
+            plt.xlabel('iteration')
+            plt.ylabel('cost')
             plt.title('Training Cost')
             plt.show()
 
