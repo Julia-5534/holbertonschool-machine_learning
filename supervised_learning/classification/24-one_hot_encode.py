@@ -6,17 +6,12 @@ import numpy as np
 
 def one_hot_encode(Y, classes):
     """Converts a numeric label vector into a one-hot matrix"""
-    if not isinstance(Y, np.ndarray) or len(Y.shape) != 1:
+    if type(Y) is not np.ndarray or type(classes) is not int:
         return None
-
-    m = len(Y)
-    classes = int(classes)  # Convert classes to an integer
-    oh_mat = np.zeros((classes, m))
-
-    for i in range(m):
-        label = Y[i]
-        if label < 0 or label >= classes:
-            return None
-        oh_mat[label, i] = 1
-
-    return oh_mat
+    m = Y.size
+    try:
+        oh_mat = np.zeros((classes, m))
+        oh_mat[Y, np.arange(m)] = 1
+        return oh_mat
+    except Exception:
+        return None
