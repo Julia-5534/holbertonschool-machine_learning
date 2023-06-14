@@ -20,8 +20,8 @@ def evaluate(X, Y, save_path):
     y = graph.get_collection("y")[0]
     # Predicted output
     y_pred = graph.get_collection("y_pred")[0]
-    loss = graph.get_collection("loss")[0]
     accuracy = graph.collection("accuracy")[0]
+    loss = graph.get_collection("loss")[0]
     # Run evaluation by feeding input & target tensors
     # and fetch predicted output, accuracy, & loss values
     return tuple(sess.run([y_pred, accuracy, loss], feed_dict={x: X, y: Y}))
