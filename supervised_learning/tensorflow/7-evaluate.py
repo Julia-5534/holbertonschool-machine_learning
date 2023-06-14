@@ -2,7 +2,6 @@
 """Task 7"""
 
 import tensorflow as tf
-import numpy as np
 
 
 def evaluate(X, Y, save_path):
