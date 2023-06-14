@@ -9,6 +9,6 @@ def forward_prop(x, layer_sizes=[], activations=[]):
     """Perform forward propagation through each layer"""
     for i in range(len(layer_sizes)):
         # Create a layer with the specified size and activation function
-        outtie = create_layer(x, layer_sizes[i], activations[i])
+        x = create_layer(x, layer_sizes[i], activations[i])
 
-    return outtie
+    return x
