@@ -6,23 +6,22 @@ import tensorflow as tf
 
 def evaluate(X, Y, save_path):
     """Evaluates output of neural network"""
-    # Load the graph
-    graph = tf.Graph()
-    with graph.as_default():
-        saver = tf.train.import_meta_graph(save_path + '.meta')
-
-    with tf.Session(graph=graph) as sess:
-        # Restore the saved variables
-        saver.restore(sess, save_path)
-
-        # Get the tensors from the graph's collection
-        y_pred = graph.get_tensor_by_name('y_pred:0')
-        loss = graph.get_tensor_by_name('loss:0')
-        accuracy = graph.get_tensor_by_name('accuracy:0')
-
-        # Evaluate the network
-        feed_dict = {'input:0': X, 'labels:0': Y}
-        prediction, acc, l_val = sess.run([y_pred, accuracy, loss],
-                                          feed_dict=feed_dict)
-
-    return prediction, acc, l_val
+    # Create a TensorFlow session
+    sess = tf.Session()
+    # Import the saved graph
+    saved = tf.train.import_meta_graph(save_path + '.meta')
+    # Restore the saved variables into the session
+    saved.restore(sess, save_path)
+    # Get the default graph
+    graph = tf.get_default_graph()
+    # Input
+    x = graph.get_collection("x")[0]
+    # Target
+    y = graph.get_collection("y")[0]
+    # Predicted output
+    y_pred = graph.get_collection("y_pred")[0]
+    loss = graph.get_collection("loss")[0]
+    accuracy = graph.collection("accuracy")[0]
+    # Run evaluation by feeding input & target tensors
+    # and fetch predicted output, accuracy, & loss values
+    return tuple(sess.run([y_pred, accuracy, loss], feed_dict={x: X, y: Y}))
