@@ -6,22 +6,18 @@ import tensorflow as tf
 
 def evaluate(X, Y, save_path):
     """Evaluates output of neural network"""
-    # Create a TensorFlow session
-    sess = tf.Session()
-    # Import the saved graph
-    saved = tf.train.import_meta_graph(save_path + '.meta')
-    # Restore the saved variables into the session
-    saved.restore(sess, save_path)
-    # Get the default graph
-    graph = tf.get_default_graph()
-    # Input
-    x = graph.get_collection("x")[0]
-    # Target
-    y = graph.get_collection("y")[0]
-    # Predicted output
-    y_pred = graph.get_collection("y_pred")[0]
-    accuracy = graph.collection("accuracy")[0]
-    loss = graph.get_collection("loss")[0]
-    # Run evaluation by feeding input & target tensors
-    # and fetch predicted output, accuracy, & loss values
-    return tuple(sess.run([y_pred, accuracy, loss], feed_dict={x: X, y: Y}))
+
+    with tf.Session() as sess:
+        # Import the saved graph
+        saver = tf.train.import_meta_graph(save_path + '.meta')
+        # Restore the saved variables into the session
+        saver.restore(sess, save_path)
+        x = tf.get_collection('x')[0]
+        y = tf.get_collection('y')[0]
+        y_pred = tf.get_collection('y_pred')[0]
+        accuracy = tf.get_collection('accuracy')[0]
+        loss = tf.get_collection('loss')[0]
+        prediction = sess.run(y_pred, feed_dict={x: X, y: Y})
+        accuracy = sess.run(accuracy, feed_dict={x: X, y: Y})
+        loss = sess.run(loss, feed_dict={x: X, y: Y})
+    return (prediction, accuracy, loss)
