@@ -2,7 +2,7 @@
 """Task 3"""
 
 import tensorflow as tf
-from 2-shuffle_data import shuffle_data
+shuffle_data = __import__('2-shuffle_data').shuffle_data
 
 
 def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
