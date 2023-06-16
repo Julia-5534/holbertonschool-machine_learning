@@ -2,7 +2,6 @@
 """Task 3"""
 
 import tensorflow as tf
-from tqdm import tqdm
 from 2-shuffle_data import shuffle_data
 
 
