@@ -45,8 +45,7 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
                 Y_batch = Y_train[start_idx:end_idx]
 
                 # Train the model on the batch
-                _, b_cost, b_acc = sess.run([train_op,
-                                             loss, accuracy],
+                _, b_cost, b_acc = sess.run([train_op, loss, accuracy],
                                             feed_dict={x: X_batch, y: Y_batch})
 
                 # Accumulate batch costs and accuracies
