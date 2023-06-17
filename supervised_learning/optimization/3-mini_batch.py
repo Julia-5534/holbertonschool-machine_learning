@@ -6,7 +6,7 @@ shuffle_data = __import__('2-shuffle_data').shuffle_data
 
 
 def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
-                     batch_size=32, epochs=5,
+                     batch_size=32, epochs=10,
                      load_path="/tmp/model.ckpt",
                      save_path="/tmp/model.ckpt"):
     """Trains loaded neural network model using mini-batch gradient descent"""
@@ -40,11 +40,11 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
                     sess.run(train_op, feed_dict={x: batch_X, y: batch_Y})
 
                     # Print training progress every 100 steps
-                    if step == 100:
+                    if (step + 1) % 100 == 0:
                         s_cst, s_acc = sess.run([loss, accuracy],
                                                 feed_dict={x: batch_X,
                                                            y: batch_Y})
-                        print("Step {}:".format(step))
+                        print("Step {}:".format(step + 1))
                         print("\tCost: {}".format(s_cst))
                         print("\tAccuracy: {}".format(s_acc))
 
@@ -53,7 +53,7 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
                                          feed_dict={x: X_train, y: Y_train})
                 v_cost, v_acc = sess.run([loss, accuracy],
                                          feed_dict={x: X_valid, y: Y_valid})
-                print("After {} epochs:".format(epoch))
+                print("After {} epochs:".format(epoch + 1))
                 print("\tTraining Cost: {}".format(t_cost))
                 print("\tTraining Accuracy: {}".format(t_acc))
                 print("\tValidation Cost: {}".format(v_cost))
