@@ -55,9 +55,9 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
 
                 # Print progress after every 100 steps
                 if (i + 1) % 100 == 0:
-                    print(f"Step {i + 1}:")
-                    print(f"\tCost: {b_cost}")
-                    print(f"\tAccuracy: {b_acc}")
+                    print("Step {}: ".format(i + 1))
+                    print("\tCost: {}".format(b_cost))
+                    print("\tAccuracy: {}".format(b_acc))
 
             # Calculate average costs and accuracies for the epoch
             avg_train_cost = total_train_cost / num_batches
@@ -68,11 +68,11 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
                                      feed_dict={x: X_valid, y: Y_valid})
 
             # Print epoch summary
-            print(f"After {epoch + 1} epochs:")
-            print(f"\tTraining Cost: {avg_train_cost}")
-            print(f"\tTraining Accuracy: {avg_train_accuracy}")
-            print(f"\tValidation Cost: {v_cost}")
-            print(f"\tValidation Accuracy: {v_acc}")
+            print("After {} epochs:".format(epoch + 1))
+            print("\tTraining Cost: {}".format(avg_train_cost))
+            print("\tTraining Accuracy: {}".format(avg_train_accuracy))
+            print("\tValidation Cost: {}".format(v_cost))
+            print("\tValidation Accuracy: {}".format(v_acc))
 
         # Save the trained model
         save_path = saver.save(sess, save_path)
