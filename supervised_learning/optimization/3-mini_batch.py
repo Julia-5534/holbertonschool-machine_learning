@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Task 3"""
 
+import numpy as np
 import tensorflow as tf
-shuffle_data = __import__('2-shuffle_data').shuffle_data
 
 
 def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
@@ -10,60 +10,53 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
                      load_path="/tmp/model.ckpt",
                      save_path="/tmp/model.ckpt"):
     """Trains loaded neural network model using mini-batch gradient descent"""
-    # Import meta graph and restore session
+    # 1) Import meta graph and restore session
     tf.reset_default_graph()
-    saver = tf.train.import_meta_graph(load_path + ".meta")
-    graph = tf.get_default_graph()
-    x = graph.get_tensor_by_name("x:0")
-    y = graph.get_tensor_by_name("y:0")
-    accuracy = graph.get_tensor_by_name("accuracy:0")
-    loss = graph.get_tensor_by_name("loss:0")
-    train_op = graph.get_operation_by_name("train_op")
+    saver = tf.train.import_meta_graph(load_path + '.meta')
+    x = tf.get_collection('x')[0]
+    y = tf.get_collection('y')[0]
+    accuracy = tf.get_collection('accuracy')[0]
+    loss = tf.get_collection('loss')[0]
+    train_op = tf.get_collection('train_op')[0]
 
     with tf.Session() as sess:
-        # Restore model
         saver.restore(sess, load_path)
 
-        # Loop over epochs
+        # 3) Loop over epochs
         for epoch in range(epochs):
-            print(f"After {epoch+1} epochs:")
+            # Shuffle the data
+            permutation = np.random.permutation(X_train.shape[0])
+            shuffled_X_train = X_train[permutation]
+            shuffled_Y_train = Y_train[permutation]
 
-            # Shuffle the training data
-            X_train, Y_train = shuffle_data(X_train, Y_train)
+            # Loop over the batches
+            for step in range(0, X_train.shape[0], batch_size):
+                # Get the current batch
+                batch_X = shuffled_X_train[step:step+batch_size]
+                batch_Y = shuffled_Y_train[step:step+batch_size]
 
-            # Training on mini-batches
-            num_batches = X_train.shape[0] // batch_size
-            for i in tqdm(range(num_batches)):
-                start = i * batch_size
-                end = start + batch_size
-                X_batch = X_train[start:end]
-                Y_batch = Y_train[start:end]
+                # Train the model
+                sess.run(train_op, feed_dict={x: batch_X, y: batch_Y})
 
-                # Train the model on the mini-batch
-                sess.run(train_op, feed_dict={x: X_batch, y: Y_batch})
+                # Print training progress every 100 steps
+                if step % 100 == 0:
+                    s_cst, s_acc = sess.run([loss, accuracy],
+                                            feed_dict={x: batch_X, y: batch_Y})
+                    print("Step {}:".format(step))
+                    print("\tCost: {}".format(s_cst))
+                    print("\tAccuracy: {}".format(s_acc))
 
-                # Print progress every 100 steps
-                if (i + 1) % 100 == 0:
-                    s_cost, s_ac = sess.run([loss, accuracy],
-                                            feed_dict={x: X_batch, y: Y_batch})
-                    print(f"\tStep {i+1}:")
-                    print(f"\t\tCost: {s_cost}")
-                    print(f"\t\tAccuracy: {s_ac}")
-
-            # Calculate metrics after each epoch
+            # Print progress after each epoch
             t_cost, t_acc = sess.run([loss, accuracy],
                                      feed_dict={x: X_train, y: Y_train})
             v_cost, v_acc = sess.run([loss, accuracy],
                                      feed_dict={x: X_valid, y: Y_valid})
+            print("After {} epochs:".format(epoch + 1))
+            print("\tTraining Cost: {}".format(t_cost))
+            print("\tTraining Accuracy: {}".format(t_acc))
+            print("\tValidation Cost: {}".format(v_cost))
+            print("\tValidation Accuracy: {}".format(v_acc))
 
-            # Print metrics after each epoch
-            print(f"\tTraining Cost: {t_cost}")
-            print(f"\tTraining Accuracy: {t_acc}")
-            print(f"\tValidation Cost: {v_cost}")
-            print(f"\tValidation Accuracy: {v_acc}")
-
-        # Save the trained model
-        saver.save(sess, save_path)
-        print(f"Model saved at {save_path}")
-
-    return save_path
+        # Save the session
+        saved_path = saver.save(sess, save_path)
+        return saved_path
