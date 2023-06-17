@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Task 3"""
 
-import numpy as np
 import tensorflow as tf
+shuffle_data = __import__('2-shuffle_data').shuffle_data
 
 
 def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
@@ -25,9 +25,7 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
         # 3) Loop over epochs
         for epoch in range(epochs):
             # Shuffle the data
-            permutation = np.random.permutation(X_train.shape[0])
-            shuffled_X_train = X_train[permutation]
-            shuffled_Y_train = Y_train[permutation]
+            shuffled_X_train, shuffled_Y_train = shuffle_data(X_train, Y_train)
 
             # Loop over the batches
             for step in range(0, X_train.shape[0], batch_size):
