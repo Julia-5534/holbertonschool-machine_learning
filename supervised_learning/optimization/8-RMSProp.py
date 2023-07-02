@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Task 8"""
 
-import numpy as np
+import tensorflow as tf
 
 
 def create_RMSProp_op(loss, alpha, beta2, epsilon):
@@ -17,15 +17,7 @@ def create_RMSProp_op(loss, alpha, beta2, epsilon):
     Returns:
         The RMSProp optimization operation.
     """
-    var_list = np.array(list(loss.keys()))
-    s = {}
-    for var in var_list:
-        s[var] = np.zeros_like(loss[var])
-
-    def train_op():
-        nonlocal s
-        for var in var_list:
-            s[var] = beta2 * s[var] + (1 - beta2) * np.square(loss[var])
-            loss[var] -= (alpha * loss[var]) / (np.sqrt(s[var]) + epsilon)
-
+    optimizer = tf.train.RMSPropOptimizer(learning_rate=alpha,
+                                          decay=beta2, epsilon=epsilon)
+    train_op = optimizer.minimize(loss)
     return train_op
