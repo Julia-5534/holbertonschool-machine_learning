@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Task 3"""
 
-import tensorflow.keras.utils as K
+import tensorflow.keras as K
 
 
 def one_hot(labels, classes=None):
