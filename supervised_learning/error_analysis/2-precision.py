@@ -3,7 +3,10 @@
 
 import numpy as np
 
+
 def precision(confusion):
+    """Calculates precision for each
+    class in a confusion matrix"""
     classes = confusion.shape[0]
     precision_values = np.zeros(classes)
 
