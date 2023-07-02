@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Task 4"""
 
+
 def moving_average(data, beta):
+    """Calculates weighted moving average of a dataset"""
     moving_averages = []
     bias_correction = 1 - beta
 
