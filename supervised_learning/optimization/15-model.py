@@ -74,7 +74,8 @@ def create_batch_norm_layer(prev, n, activation):
 def create_Adam_op(loss, alpha, beta1, beta2, epsilon):
     """Adam Optimizer"""
     optimizer = tf.train.AdamOptimizer(
-        alpha, beta1, beta2, epsilon).minimize(loss)
+        learning_rate=alpha, beta1=beta1,
+        beta2=beta2, epsilon=epsilon).minimize(loss)
     return optimizer
 
 
