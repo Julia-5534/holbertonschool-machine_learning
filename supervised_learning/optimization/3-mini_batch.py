@@ -52,19 +52,19 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
                 if (step + 1) % 100 == 0:
                     train_cost, train_acc = sess.run(
                         [loss, accuracy], feed_dict={x: X_train, y: Y_train})
-                    print(f"Step {step+1}:")
-                    print(f"\tCost: {train_cost}")
-                    print(f"\tAccuracy: {train_acc}")
+                    print("\tStep {}:".format(step+1))
+                    print("\t\tCost: {}".format(train_cost))
+                    print("\t\tAccuracy: {}".format(train_acc))
 
             train_cost, train_acc = sess.run(
                 [loss, accuracy], feed_dict={x: X_train, y: Y_train})
             valid_cost, valid_acc = sess.run(
                 [loss, accuracy], feed_dict={x: X_valid, y: Y_valid})
 
-            print(f"After {epoch + 1} epochs:")
-            print(f"\tTraining Cost: {train_cost}")
-            print(f"\tTraining Accuracy: {train_acc}")
-            print(f"\tValidation Cost: {valid_cost}")
-            print(f"\tValidation Accuracy: {valid_acc}")
+            print("After {} epochs:".format(epoch + 1))
+            print("\tTraining Cost: {}".format(train_cost))
+            print("\tTraining Accuracy: {}".format(train_acc))
+            print("\tValidation Cost: {}".format(valid_cost))
+            print("\tValidation Accuracy: {}".format(valid_acc))
 
         return save_path
