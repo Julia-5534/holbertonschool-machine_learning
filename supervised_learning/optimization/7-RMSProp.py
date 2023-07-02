@@ -1,21 +1,23 @@
 #!/usr/bin/env python3
 """Task 7"""
 
-import tensorflow as tf
+import numpy as np
 
 
-def create_momentum_op(loss, alpha, beta1):
-    """Creates training op for neural network using gradient descent
-    with momentum optimization.
+def update_variables_RMSProp(alpha, beta2, epsilon, var, grad, s):
+    """Updates a variable using the RMSProp optimization algorithm.
 
     Args:
-        loss: The loss of the network.
         alpha: The learning rate.
-        beta1: The momentum weight.
+        beta2: The RMSProp weight.
+        epsilon: A small number to avoid division by zero.
+        var: A numpy.ndarray containing the variable to be updated.
+        grad: A numpy.ndarray containing the gradient of var.
+        s: The previous second moment of var.
 
     Returns:
-        The momentum optimization operation.
+        The updated variable and the new moment, respectively.
     """
-    optimizer = tf.train.MomentumOptimizer(learning_rate=alpha, momentum=beta1)
-    train_op = optimizer.minimize(loss)
-    return train_op
+    s = beta2 * s + (1 - beta2) * np.square(grad)
+    var = var - (alpha * grad) / (np.sqrt(s) + epsilon)
+    return var, s
