@@ -8,7 +8,7 @@ shuffle_data = __import__('2-shuffle_data').shuffle_data
 def train_mini_batch(X_train, Y_train, X_valid, Y_valid, batch_size=32,
                      epochs=5, load_path="/tmp/model.ckpt",
                      save_path="/tmp/model.ckpt"):
-    """Trains loaded neural network model with mini-batch gradient descent"""
+    """Trains loaded neural network model using mini-batch gradient descent"""
     m = X_train.shape[0]
     with tf.Session() as sess:
         saver = tf.train.import_meta_graph(load_path + '.meta')
@@ -20,24 +20,19 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid, batch_size=32,
         train_op = tf.get_collection('train_op')[0]
 
         for epoch in range(epochs + 1):
-            print("After {} epochs:".format(epoch))
-            train_cost = sess.run(loss,
-                                  feed_dict={x: X_train,
-                                             y: Y_train})
-            train_accuracy = sess.run(accuracy,
-                                      feed_dict={x: X_train,
-                                                 y: Y_train})
-            valid_cost = sess.run(loss,
-                                  feed_dict={x: X_valid,
-                                             y: Y_valid})
-            valid_accuracy = sess.run(accuracy,
-                                      feed_dict={x: X_valid,
-                                                 y: Y_valid})
+            if epoch > 0:
+                print("After {} epochs:".format(epoch))
+                train_cost = sess.run(loss, feed_dict={x: X_train, y: Y_train})
+                train_accuracy = sess.run(accuracy,
+                                          feed_dict={x: X_train, y: Y_train})
+                valid_cost = sess.run(loss, feed_dict={x: X_valid, y: Y_valid})
+                valid_accuracy = sess.run(accuracy,
+                                          feed_dict={x: X_valid, y: Y_valid})
 
-            print("\tTraining Cost: {}".format(train_cost))
-            print("\tTraining Accuracy: {}".format(train_accuracy))
-            print("\tValidation Cost: {}".format(valid_cost))
-            print("\tValidation Accuracy: {}".format(valid_accuracy))
+                print("\tTraining Cost: {}".format(train_cost))
+                print("\tTraining Accuracy: {}".format(train_accuracy))
+                print("\tValidation Cost: {}".format(valid_cost))
+                print("\tValidation Accuracy: {}".format(valid_accuracy))
 
             if epoch == epochs:
                 break
@@ -58,11 +53,10 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid, batch_size=32,
                                     y: Y_train[low:high, :]})
 
                 step_number += 1
-                if step_number % 100 == 0:
-                    step_cost = sess.run(
-                        loss,
-                        feed_dict={x: X_train[low:high, :],
-                                   y: Y_train[low:high, :]})
+                if step_number == 100:
+                    step_cost = sess.run(loss,
+                                         feed_dict={x: X_train[low:high, :],
+                                                    y: Y_train[low:high, :]})
                     step_accuracy = sess.run(
                         accuracy,
                         feed_dict={x: X_train[low:high, :],
