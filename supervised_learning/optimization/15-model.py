@@ -50,8 +50,7 @@ def model(Data_train, Data_valid, layers, activations, alpha=0.001, beta1=0.9,
 
         for epoch in range(epochs + 1):
             # Shuffle training data
-            shuff = np.random.permutation(len(X_train))
-            X_shuff, Y_shuff = X_train[shuff], Y_train[shuff]
+            np.random.shuffle(Data_train)
 
             # Print progress after each epoch
             if epoch > 0:
@@ -68,8 +67,8 @@ def model(Data_train, Data_valid, layers, activations, alpha=0.001, beta1=0.9,
 
             for step in range(0, X_train.shape[0], batch_size):
                 feed = {
-                    x: X_shuff[step:step + batch_size],
-                    y: Y_shuff[step:step + batch_size]
+                    x: X_train[step:step + batch_size],
+                    y: Y_train[step:step + batch_size]
                 }
                 sess.run(train_op, feed)
 
