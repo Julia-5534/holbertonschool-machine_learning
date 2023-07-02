@@ -131,6 +131,12 @@ def model(Data_train, Data_valid, layers, activations, alpha=0.001,
             valid_cost, valid_accuracy = sess.run(
                 [loss, accuracy], feed_dict=feed_valid)
 
+            print("After {} epochs:".format(epoch))
+            print("\tTraining Cost: {}".format(train_cost))
+            print("\tTraining Accuracy: {}".format(train_accuracy))
+            print("\tValidation Cost: {}".format(valid_cost))
+            print("\tValidation Accuracy: {}".format(valid_accuracy))
+
             if epoch < epochs:
                 Xs, Ys = shuffle_data(X_train, Y_train)
 
@@ -150,13 +156,9 @@ def model(Data_train, Data_valid, layers, activations, alpha=0.001,
                     if ((step_number + 1) % 100 == 0) and (step_number != 0):
                         step_cost, step_accuracy = sess.run(
                             [loss, accuracy], feed_dict=feed_mini)
-
-            if epoch < epochs:
-                print("After {} epochs:".format(epoch))
-                print("\tTraining Cost: {}".format(train_cost))
-                print("\tTraining Accuracy: {}".format(train_accuracy))
-                print("\tValidation Cost: {}".format(valid_cost))
-                print("\tValidation Accuracy: {}".format(valid_accuracy))
+                        print("\tStep {}:".format(step_number + 1))
+                        print("\t\tCost: {}".format(step_cost))
+                        print("\t\tAccuracy: {}".format(step_accuracy))
 
             sess.run(tf.assign(global_step, global_step + 1))
             save_path = saver.save(sess, save_path)
