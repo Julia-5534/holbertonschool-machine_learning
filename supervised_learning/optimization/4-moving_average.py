@@ -3,14 +3,13 @@
 
 
 def moving_average(data, beta):
-    """Calculates weighted moving average of a dataset"""
+    """Calulates weighted moving average of a dataset"""
     moving_averages = []
-    bias_correction = 1 - beta
+    avg = 0
+    bias_correction = avg / (1 - beta ** (i + 1))
 
-    weighted_average = 0
-    for i, value in enumerate(data):
-        weighted_average = (beta * weighted_average) + ((1 - beta) * value)
-        bias_corrected_average = weighted_average / bias_correction
-        moving_averages.append(bias_corrected_average)
+    for i in range(len(data)):
+        avg = beta * avg + (1 - beta) * data[i]
+        moving_averages.append(bias_correction)
 
     return moving_averages
