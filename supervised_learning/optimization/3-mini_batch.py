@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Task 3"""
+"""Train a loaded neural network model using mini-batch gradient descent."""
 
 import tensorflow as tf
 shuffle_data = __import__('2-shuffle_data').shuffle_data
@@ -8,8 +8,22 @@ shuffle_data = __import__('2-shuffle_data').shuffle_data
 def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
                      batch_size=32, epochs=5, load_path="/tmp/model.ckpt",
                      save_path="/tmp/model.ckpt"):
-    """Trains loaded neural network model
-    using mini-batch gradient descent"""
+    """Trains a loaded neural network model using mini-batch gradient descent.
+
+    Args:
+        X_train (numpy.ndarray): Training data of shape (m, 784)
+        Y_train (numpy.ndarray): Training labels in one-hot format (m, 10)
+        X_valid (numpy.ndarray): Validation data of shape (m, 784)
+        Y_valid (numpy.ndarray): Validation labels in one-hot format (m, 10)
+        batch_size (int): Number of data points in a batch (default: 32)
+        epochs (int): Times the training should pass whole dataset (default: 5)
+        load_path (str): Path to load the model (default: "/tmp/model.ckpt")
+        save_path (str): Saved path after training (default: "/tmp/model.ckpt")
+
+    Returns:
+        str: The path where the model was saved.
+
+    """
     graph = tf.Graph()
     with graph.as_default():
         saver = tf.train.import_meta_graph(load_path + '.meta')
