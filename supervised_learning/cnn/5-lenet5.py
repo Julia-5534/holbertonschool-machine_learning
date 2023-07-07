@@ -7,7 +7,7 @@ import tensorflow.keras as K
 def lenet5(X):
     """Builds a modified version of the LeNet-5 architecture"""
     # Convolutional layer with 6 kernels of shape 5x5 and same padding
-    init = K.initializers.he_normal(seed=None)
+    init = K.initializers.he_normal(seed=SEED)
 
     conv1 = K.layers.Conv2D(
         filters=6, kernel_size=(5, 5),
