@@ -35,7 +35,8 @@ def lenet5(X):
         units=84, activation='relu',
         kernel_initializer=init)(fc1)
     # Fully connected softmax output layer with 10 nodes
-    output = K.layers.Dense(units=10, kernel_initializer=init)(fc2)
+    output = K.layers.Dense(units=10, activation='softmax',
+                            kernel_initializer=init)(fc2)
     pred = K.layers.Activation('softmax')(output)
 
     model = K.models.Model(inputs=X, outputs=pred)
