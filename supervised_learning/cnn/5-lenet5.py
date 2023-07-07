@@ -35,9 +35,10 @@ def lenet5(X):
         units=84, activation='relu',
         kernel_initializer=init)(fc1)
     # Fully connected softmax output layer with 10 nodes
-    output = K.layers.Dense(units=10, activation='softmax')(fc2)
+    output = K.layers.Dense(units=10, kernel_initializer=init)(fc2)
+    pred = K.layers.Activation('softmax')(output)
 
-    model = K.models.Model(inputs=X, outputs=output)
+    model = K.models.Model(inputs=X, outputs=pred)
     model.compile(
         optimizer=K.optimizers.Adam(),
         loss=K.losses.categorical_crossentropy, metrics=['accuracy'])
