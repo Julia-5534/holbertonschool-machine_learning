@@ -25,7 +25,7 @@ def pool_backward(dA, A_prev, kernel_shape, stride=(1, 1), mode='max'):
         da = dA[i]
         for h in range(h_out):
             for w in range(w_out):
-                for c in range(c):
+                for ch in range(c):
                     # Find the corners of the current slice
                     vert_start = h * sh
                     vert_end = vert_start + kh
@@ -36,19 +36,21 @@ def pool_backward(dA, A_prev, kernel_shape, stride=(1, 1), mode='max'):
                         # Perform the backward pass for max pooling
                         a_slice = a_prev[
                             vert_start:vert_end,
-                            horiz_start:horiz_end, c]
+                            horiz_start:horiz_end, ch]
                         mask = (a_slice == np.max(a_slice))
-                        da_prev_slice = mask * da[h, w, c]
+                        da_prev_slice = mask * da[h, w, ch]
                         dA_prev[
                             i,
                             vert_start:vert_end,
-                            horiz_start:horiz_end, c] += da_prev_slice
+                            horiz_start:horiz_end, ch] += da_prev_slice
                     elif mode == 'avg':
                         # Perform the backward pass for average pooling
-                        da_prev = np.ones(
-                            (kh, kw)) * da[h, w, c] / (kh * kw)
+                        da_prev_slice = da[h, w, ch] / (kh * kw)
                         dA_prev[
-                            i, vert_start:vert_end,
-                            horiz_start:horiz_end, c] += da_prev
+                            i,
+                            vert_start:vert_end,
+                            horiz_start:horiz_end,
+                            ch
+                        ] += np.ones((kh, kw)) * da_prev_slice
 
     return dA_prev
