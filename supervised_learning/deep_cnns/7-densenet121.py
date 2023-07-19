@@ -17,18 +17,18 @@ def densenet121(growth_rate=32, compression=1.0):
     X_input = K.Input(input_shape)
 
     # Initial convolution layer
-    X = K.layers.BatchNormalization()(X_input)
+    X = K.layers.BatchNormalization(axis=3)(X_input)
     X = K.layers.Activation('relu')(X)
     X = K.layers.Conv2D(
         filters=nb_filters,
-        kernel_size=(7, 7),
-        strides=(2, 2),
+        kernel_size=7,
+        strides=2,
         padding='same',
         kernel_initializer='he_normal')(X)
 
     # Initial pooling layer
-    X = K.layers.MaxPooling2D(pool_size=(3, 3),
-                              strides=(2, 2),
+    X = K.layers.MaxPooling2D(pool_size=3,
+                              strides=2,
                               padding='same')(X)
 
     # Dense block 1
@@ -57,12 +57,10 @@ def densenet121(growth_rate=32, compression=1.0):
     X = K.layers.Activation('relu')(X)
 
     # Global average pooling and output layer
-    X = K.layers.GlobalAveragePooling2D()(X)
-    X_output = K.layers.Dense(units=1000,
-                              activation='softmax',
-                              kernel_initializer='he_normal')(X)
+    X = K.layers.AveragePooling2D(pool_size=7, strides=1, padding='valid')(X)
+    X = K.layers.Dense(units=1000, activation='softmax',
+                       kernel_initializer='he_normal')(X)
 
-    model = K.Model(inputs=X_input,
-                    outputs=X_output)
+    model = K.models.Model(inputs=X_input, outputs=X)
 
     return model
