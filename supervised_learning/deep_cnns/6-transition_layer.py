@@ -4,30 +4,22 @@
 import tensorflow.keras as K
 
 
-def dense_block(X, nb_filters, growth_rate, layers):
+def transition_layer(X, nb_filters, compression):
     """Builds a transition layer as described in
     Densely Connected Convolutional Networks"""
-    for i in range(layers):
-        # Bottleneck layer (1x1 Convolution)
-        X_bottleneck = K.layers.BatchNormalization()(X)
-        X_bottleneck = K.layers.Activation('relu')(X_bottleneck)
-        X_bottleneck = K.layers.Conv2D(
-            filters=4 * growth_rate,
-            kernel_size=(1, 1),
-            padding='same',
-            kernel_initializer='he_normal')(X_bottleneck)
+    nb_filters = int(nb_filters * compression)
 
-        # Convolution layer (3x3 Convolution)
-        X_conv = K.layers.BatchNormalization()(X_bottleneck)
-        X_conv = K.layers.Activation('relu')(X_conv)
-        X_conv = K.layers.Conv2D(
-            filters=growth_rate,
-            kernel_size=(3, 3),
-            padding='same',
-            kernel_initializer='he_normal')(X_conv)
+    # 1x1 Convolution (Bottleneck layer)
+    X = K.layers.BatchNormalization()(X)
+    X = K.layers.Activation('relu')(X)
+    X = K.layers.Conv2D(
+        filters=nb_filters,
+        kernel_size=(1, 1),
+        padding='same',
+        kernel_initializer='he_normal')(X)
 
-        # Concatenate the output of each layer with the input X
-        X = K.layers.concatenate([X, X_conv])
-        nb_filters += growth_rate
+    # Average Pooling
+    X = K.layers.AveragePooling2D(pool_size=(2, 2),
+                                  strides=(2, 2))(X)
 
     return X, nb_filters
