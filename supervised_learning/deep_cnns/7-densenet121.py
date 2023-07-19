@@ -52,10 +52,6 @@ def densenet121(growth_rate=32, compression=1.0):
     # Dense block 4
     X, nb_filters = dense_block(X, nb_filters, growth_rate, 16)
 
-    # Final batch normalization and activation
-    X = K.layers.BatchNormalization()(X)
-    X = K.layers.Activation('relu')(X)
-
     # Global average pooling and output layer
     X = K.layers.AveragePooling2D(pool_size=7, strides=1, padding='valid')(X)
     X = K.layers.Dense(units=1000, activation='softmax',
