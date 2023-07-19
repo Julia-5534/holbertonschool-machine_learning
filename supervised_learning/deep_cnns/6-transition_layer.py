@@ -5,6 +5,8 @@ import tensorflow.keras as K
 
 
 def dense_block(X, nb_filters, growth_rate, layers):
+    """Builds a transition layer as described in
+    Densely Connected Convolutional Networks"""
     for i in range(layers):
         # Bottleneck layer (1x1 Convolution)
         X_bottleneck = K.layers.BatchNormalization()(X)
