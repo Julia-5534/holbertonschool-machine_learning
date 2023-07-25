@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """Transfer Learning"""
 
-import numpy as np
-import tensorflow as tf
 import tensorflow.keras as K
 
 
@@ -44,9 +42,7 @@ def create_and_train_model(X_train, Y_train):
 
     # Load a pre-trained model from Keras Applications (e.g., MobileNetV2)
     base_model = K.applications.MobileNetV2(
-        include_top=False,
-        input_shape=(32, 32, 3),
-        pooling='avg')
+        include_top=False, input_shape=(32, 32, 3), pooling='avg')
 
     # Freeze all layers in the base model
     for layer in base_model.layers:
