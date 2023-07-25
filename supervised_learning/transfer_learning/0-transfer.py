@@ -61,7 +61,7 @@ def create_and_train_model(X_train, Y_train):
         metrics=['accuracy'])
 
     # Train the model
-    model.fit(X_train, Y_train, epochs=10, batch_size=64, validation_split=0.1)
+    model.fit(X_train, Y_train, epochs=1, batch_size=64, validation_split=0.1)
 
     return model
 
