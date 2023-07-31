@@ -5,73 +5,71 @@ import tensorflow.keras as K
 
 
 def preprocess_data(X, Y):
-    """
-    Preprocesses the data for the model.
-
-    Args:
-        X (numpy.ndarray): Input data of shape (m, 32, 32, 3).
-        Y (numpy.ndarray): Labels of shape (m,).
-
-    Returns:
-        X_p (numpy.ndarray): Preprocessed input data.
-        Y_p (numpy.ndarray): Preprocessed labels.
-    """
-    # Normalize the data to values between 0 and 1
+    """Placeholder"""
+    # Normalize the pixel values to the range [0, 1]
     X_p = X.astype('float32') / 255.0
-
-    # Convert the labels to one-hot encoding
-    Y_p = K.utils.to_categorical(Y, num_classes=10)
-
+    # One-hot encode the labels
+    Y_p = K.utils.to_categorical(Y, 10)
     return X_p, Y_p
 
 
-def create_and_train_model(X_train, Y_train):
-    """
-    Creates and trains the CNN model.
+def build_and_train_model():
+    """Placeholder"""
+    # Load the CIFAR 10 dataset
+    (x_train, y_train), (x_test, y_test) = K.datasets.cifar10.load_data()
 
-    Args:
-        X_train (numpy.ndarray): Training data of shape (m, 32, 32, 3).
-        Y_train (numpy.ndarray): Training labels of shape (m,).
-
-    Returns:
-        trained_model
-        (tensorflow.python.keras.engine.training.Model): Trained model.
-    """
     # Preprocess the data
-    X_train, Y_train = preprocess_data(X_train, Y_train)
+    x_train, y_train = preprocess_data(x_train, y_train)
+    x_test, y_test = preprocess_data(x_test, y_test)
 
-    # Load a pre-trained model from Keras Applications (e.g., MobileNetV2)
-    base_model = K.applications.MobileNetV2(
-        include_top=False, input_shape=(32, 32, 3), pooling='avg')
+    # Define the input shape
+    input_shape = (32, 32, 3)
+
+    # Create a Lambda layer to scale up the data to the correct size
+    input_tensor = K.Input(shape=input_shape)
+    lambda_layer = K.Lambda(
+        lambda image: K.image.resize(image,
+                                     (224, 224)))(input_tensor)
+
+    # Load the ResNet50 model with pre-trained ImageNet weights
+    base_model = K.ResNet50(
+        weights='imagenet',
+        include_top=False,
+        input_tensor=lambda_layer)
 
     # Freeze all layers in the base model
     for layer in base_model.layers:
         layer.trainable = False
 
-    # Add a new trainable layer for classification
-    outputs = K.layers.Dense(10, activation='softmax')(base_model.output)
+    # Add a custom classifier on top of the frozen layers
+    x = K.layers.GlobalAveragePooling2D()(base_model.output)
+    x = K.Dense(256, activation='relu')(x)
+    x = K.Dense(10, activation='softmax')(x)
 
     # Create the final model
-    model = K.models.Model(inputs=base_model.input, outputs=outputs)
+    model = K.Model(inputs=input_tensor, outputs=x)
 
     # Compile the model
     model.compile(
-        optimizer='adam',
+        optimizer=K.Adam(lr=0.001),
         loss='categorical_crossentropy',
         metrics=['accuracy'])
 
     # Train the model
-    model.fit(X_train, Y_train, epochs=1, batch_size=64, validation_split=0.1)
+    model.fit(
+        x_train,
+        y_train,
+        batch_size=64,
+        epochs=5,
+        validation_data=(x_test, y_test))
+
+    # Save the model to the current working directory
+    model.save('cifar10.h5')
 
     return model
 
 
-if __name__ == "__main__":
-    # Load CIFAR-10 dataset
-    (X_train, Y_train), (X_test, Y_test) = K.datasets.cifar10.load_data()
-
-    # Train the model
-    trained_model = create_and_train_model(X_train, Y_train)
-
-    # Save the trained model
-    trained_model.save("cifar10.h5")
+if __name__ == '__main__':
+    # Set K.learning_phase to 0 for test mode
+    K.backend.set_learning_phase(0)
+    model = build_and_train_model()
