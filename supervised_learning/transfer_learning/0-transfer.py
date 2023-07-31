@@ -27,7 +27,7 @@ def build_and_train_model():
 
     # Create a Lambda layer to scale up the data to the correct size
     input_tensor = K.Input(shape=input_shape)
-    lambda_layer = K.Lambda(
+    lambda_layer = K.layers.Lambda(
         lambda image: K.image.resize(image,
                                      (224, 224)))(input_tensor)
 
