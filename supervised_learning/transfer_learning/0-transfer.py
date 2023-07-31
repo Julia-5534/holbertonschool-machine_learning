@@ -29,6 +29,7 @@ def build_and_train_model():
     input_tensor = K.Input(shape=input_shape)
     lambda_layer = K.layers.Lambda(
         lambda image: K.backend.resize_images(
+            image,
             height_factor=(224 // 32),
             width_factor=(224 // 32),
             data_format="channels_last"))(input_tensor)
