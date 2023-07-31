@@ -28,7 +28,7 @@ def build_and_train_model():
     # Create a Lambda layer to scale up the data to the correct size
     input_tensor = K.Input(shape=input_shape)
     lambda_layer = K.layers.Lambda(
-        lambda image: K.image.resize(image,
+        lambda image: K.layers.image.resize(image,
                                      (224, 224)))(input_tensor)
 
     # Load the ResNet50 model with pre-trained ImageNet weights
