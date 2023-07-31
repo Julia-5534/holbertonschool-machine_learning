@@ -28,11 +28,11 @@ def build_and_train_model():
     # Create a Lambda layer to scale up the data to the correct size
     input_tensor = K.Input(shape=input_shape)
     lambda_layer = K.layers.Lambda(
-        lambda image: K.layers.image.resize(image,
-                                     (224, 224)))(input_tensor)
+        lambda image: K.backend.resize_images(
+            image, 224, 224, "channels_last"))(input_tensor)
 
     # Load the ResNet50 model with pre-trained ImageNet weights
-    base_model = K.ResNet50(
+    base_model = K.applications.ResNet50(
         weights='imagenet',
         include_top=False,
         input_tensor=lambda_layer)
@@ -43,15 +43,15 @@ def build_and_train_model():
 
     # Add a custom classifier on top of the frozen layers
     x = K.layers.GlobalAveragePooling2D()(base_model.output)
-    x = K.Dense(256, activation='relu')(x)
-    x = K.Dense(10, activation='softmax')(x)
+    x = K.layers.Dense(256, activation='relu')(x)
+    x = K.layers.Dense(10, activation='softmax')(x)
 
     # Create the final model
     model = K.Model(inputs=input_tensor, outputs=x)
 
     # Compile the model
     model.compile(
-        optimizer=K.Adam(lr=0.001),
+        optimizer=K.optimizers.Adam(lr=0.001),
         loss='categorical_crossentropy',
         metrics=['accuracy'])
 
