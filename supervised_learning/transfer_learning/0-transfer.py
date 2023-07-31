@@ -29,7 +29,9 @@ def build_and_train_model():
     input_tensor = K.Input(shape=input_shape)
     lambda_layer = K.layers.Lambda(
         lambda image: K.backend.resize_images(
-            image, 224, 224, "channels_last"))(input_tensor)
+            height_factor=(224 // 32),
+            width_factor=(224 // 32),
+            data_format="channels_last"))(input_tensor)
 
     # Load the ResNet50 model with pre-trained ImageNet weights
     base_model = K.applications.ResNet50(
@@ -47,7 +49,7 @@ def build_and_train_model():
     x = K.layers.Dense(10, activation='softmax')(x)
 
     # Create the final model
-    model = K.Model(inputs=input_tensor, outputs=x)
+    model = K.Model(input_tensor, outputs=x)
 
     # Compile the model
     model.compile(
