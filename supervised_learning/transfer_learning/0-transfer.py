@@ -51,8 +51,8 @@ def build_and_train_model():
 
     # Compile the model
     model.compile(
-        optimizer=K.optimizers.Adam(lr=0.001),
         loss='categorical_crossentropy',
+        optimizer=K.optimizers.Adam(),
         metrics=['accuracy'])
 
     # Train the model
