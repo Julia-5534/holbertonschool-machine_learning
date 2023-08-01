@@ -69,8 +69,6 @@ def build_and_train_model():
     # Save the model to the current working directory
     model.save('cifar10.h5')
 
-    return model
-
 
 if __name__ == '__main__':
     # Set K.learning_phase to 0 for test mode
