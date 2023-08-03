@@ -15,7 +15,7 @@ def preprocess_data(X, Y):
 
 def build_and_train_model():
     """Placeholder"""
-    # Load the CIFAR 10 dataset
+    # Load the CIFAR 10 datasetdef build_and_train_model()
     (x_train, y_train), (x_test, y_test) = K.datasets.cifar10.load_data()
 
     # Preprocess the data
@@ -54,15 +54,15 @@ def build_and_train_model():
 
     # Compile the model
     model.compile(
-        loss='categorical_crossentropy',
         optimizer=K.optimizers.Adam(),
+        loss='categorical_crossentropy',
         metrics=['accuracy'])
 
     # Train the model
     model.fit(
         x_train,
         y_train,
-        batch_size=64,
+        batch_size=300,
         epochs=5,
         validation_data=(x_test, y_test))
 
