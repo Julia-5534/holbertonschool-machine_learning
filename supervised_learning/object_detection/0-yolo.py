@@ -5,6 +5,7 @@ from tensorflow import keras as K
 
 
 class Yolo:
+    """Yolo Class"""
     def __init__(self, model_path, classes_path, class_t, nms_t, anchors):
         """
         model_path: path to where a Darknet Keras model is stored
