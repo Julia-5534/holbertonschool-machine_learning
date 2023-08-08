@@ -29,7 +29,6 @@ class Yolo:
         self.anchors = anchors
 
     def process_outputs(self, outputs, image_size):
-        """Processes Outputs"""
         boxes = []
         box_confidences = []
         box_class_probs = []
