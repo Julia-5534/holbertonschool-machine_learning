@@ -29,6 +29,7 @@ class Yolo:
         self.anchors = anchors
 
     def process_outputs(self, outputs, image_size):
+        """Processes outputs"""
         boxes = []
         box_confidences = []
         box_class_probs = []
@@ -53,29 +54,35 @@ class Yolo:
             t_w = output[..., 2]
             t_h = output[..., 3]
 
-            # Convert the bounding box parameters to actual coordinates
-            pred_boxes_x = (t_x + grid_x) / grid_width
-            pred_boxes_y = (t_y + grid_y) / grid_height
-            pred_boxes_w = anchor_width * np.exp(t_w)
-            pred_boxes_h = anchor_height * np.exp(t_h)
+        # Apply sigmoid function to bounding box parameters
+        t_x = 1 / (1 + np.exp(-t_x))
+        t_y = 1 / (1 + np.exp(-t_y))
+        t_w = np.exp(t_w)
+        t_h = np.exp(t_h)
 
-            # Normalize the box coordinates to the image size
-            pred_boxes_x *= img_width
-            pred_boxes_y *= img_height
-            pred_boxes_w *= img_width
-            pred_boxes_h *= img_height
+        # Convert the bounding box parameters to actual coordinates
+        pred_boxes_x = (t_x + grid_x) / grid_width
+        pred_boxes_y = (t_y + grid_y) / grid_height
+        pred_boxes_w = anchor_width * t_w
+        pred_boxes_h = anchor_height * t_h
 
-            # Compute box confidence and class probabilities
-            box_confidence = 1 / (1 + np.exp(-output[..., 4:5]))
-            box_class_probabilities = 1 / (1 + np.exp(-output[..., 5:]))
+        # Normalize the box coordinates to the image size
+        pred_boxes_x *= img_width
+        pred_boxes_y *= img_height
+        pred_boxes_w *= img_width
+        pred_boxes_h *= img_height
 
-            boxes.append(np.stack([
-                pred_boxes_x,
-                pred_boxes_y,
-                pred_boxes_w,
-                pred_boxes_h],
-                axis=-1))
-            box_confidences.append(box_confidence)
-            box_class_probs.append(box_class_probabilities)
+        # Compute box confidence and class probabilities
+        box_confidence = 1 / (1 + np.exp(-output[..., 4:5]))
+        box_class_probabilities = 1 / (1 + np.exp(-output[..., 5:]))
+
+        boxes.append(np.stack([
+            pred_boxes_x,
+            pred_boxes_y,
+            pred_boxes_w,
+            pred_boxes_h],
+            axis=-1))
+        box_confidences.append(box_confidence)
+        box_class_probs.append(box_class_probabilities)
 
         return boxes, box_confidences, box_class_probs
