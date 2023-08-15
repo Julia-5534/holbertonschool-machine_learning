@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Task 1"""
+"""Task 0"""
 
 import numpy as np
 from tensorflow import keras as K
@@ -29,7 +29,6 @@ class Yolo:
         self.anchors = anchors
 
     def process_outputs(self, outputs, image_size):
-        """Process outputs"""
         boxes = []
         box_confidences = []
         box_class_probs = []
@@ -38,51 +37,27 @@ class Yolo:
 
         for output in outputs:
             grid_height, grid_width, num_anchors, _ = output.shape
-            num_classes = output.shape[3] - 5
+            box = np.zeros(output[:, :, :, :4].shape)
+            confidences = output[:, :, :, 4:5]
+            class_probs = output[:, :, :, 5:]
 
-            # Initialize arrays for box calculations
-            boxes_grid = np.zeros_like(
-                output[..., :4])
-            box_confidences_grid = np.zeros_like(
-                output[..., 4:5])
-            box_class_probs_grid = np.zeros_like(
-                output[..., 5:])
+            # Compute box coordinates relative to the original image
+            for anchor_idx in range(num_anchors):
+                box[:, :, anchor_idx, 0] = (
+                    output[:, :, anchor_idx, 0] + self.anchors[
+                        0, anchor_idx, 0]) / grid_width * img_width
+                box[:, :, anchor_idx, 1] = (
+                    output[:, :, anchor_idx, 1] + self.anchors[
+                        0, anchor_idx, 1]) / grid_height * img_height
+                box[:, :, anchor_idx, 2] = (np.exp(
+                    output[:, :, anchor_idx, 2]) * self.anchors[
+                        0, anchor_idx, 0]) / grid_width * img_width
+                box[:, :, anchor_idx, 3] = (np.exp(
+                    output[:, :, anchor_idx, 3]) * self.anchors[
+                        0, anchor_idx, 1]) / grid_height * img_height
 
-            for i in range(grid_height):
-                for j in range(grid_width):
-                    for k in range(num_anchors):
-                        t_x = output[i, j, k, 0]
-                        t_y = output[i, j, k, 1]
-                        t_w = output[i, j, k, 2]
-                        t_h = output[i, j, k, 3]
-
-                        # Apply sigmoid function
-                        bx = 1 / (1 + np.exp(-t_x)) + j
-                        by = 1 / (1 + np.exp(-t_y)) + i
-                        bw = self.anchors[k, 0] * np.exp(t_w)
-                        bh = self.anchors[k, 1] * np.exp(t_h)
-
-                        # Normalize coordinates to image size
-                        bx /= grid_width
-                        by /= grid_height
-                        bw /= img_width
-                        bh /= img_height
-
-                        x1 = (bx - bw / 2) * img_width
-                        y1 = (by - bh / 2) * img_height
-                        x2 = (bx + bw / 2) * img_width
-                        y2 = (by + bh / 2) * img_height
-
-                        boxes_grid[i, j, k] = [x1, y1, x2, y2]
-                        box_confidences_grid[
-                            i, j, k] = 1 / (1 + np.exp(
-                                -output[i, j, k, 4]))
-                        box_class_probs_grid[
-                            i, j, k] = 1 / (1 + np.exp(
-                                -output[i, j, k, 5:]))
-
-            boxes.append(boxes_grid)
-            box_confidences.append(box_confidences_grid)
-            box_class_probs.append(box_class_probs_grid)
+            boxes.append(box)
+            box_confidences.append(confidences)
+            box_class_probs.append(class_probs)
 
         return boxes, box_confidences, box_class_probs
