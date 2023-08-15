@@ -29,6 +29,7 @@ class Yolo:
         self.anchors = anchors
 
     def process_outputs(self, outputs, image_size):
+        """Processes Outputs"""
         boxes = []
         box_confidences = []
         box_class_probs = []
@@ -43,18 +44,16 @@ class Yolo:
 
             # Compute box coordinates relative to the original image
             for anchor_idx in range(num_anchors):
-                box[:, :, anchor_idx, 0] = (
-                    output[:, :, anchor_idx, 0] + self.anchors[
-                        0, anchor_idx, 0]) / grid_width * img_width
-                box[:, :, anchor_idx, 1] = (
-                    output[:, :, anchor_idx, 1] + self.anchors[
-                        0, anchor_idx, 1]) / grid_height * img_height
-                box[:, :, anchor_idx, 2] = (np.exp(
+                box[:, :, anchor_idx, 0] = output[
+                    :, :, anchor_idx, 0] * img_width
+                box[:, :, anchor_idx, 1] = output[
+                    :, :, anchor_idx, 1] * img_height
+                box[:, :, anchor_idx, 2] = np.exp(
                     output[:, :, anchor_idx, 2]) * self.anchors[
-                        0, anchor_idx, 0]) / grid_width * img_width
-                box[:, :, anchor_idx, 3] = (np.exp(
+                        0, anchor_idx, 0] * img_width
+                box[:, :, anchor_idx, 3] = np.exp(
                     output[:, :, anchor_idx, 3]) * self.anchors[
-                        0, anchor_idx, 1]) / grid_height * img_height
+                        0, anchor_idx, 1] * img_height
 
             boxes.append(box)
             box_confidences.append(confidences)
