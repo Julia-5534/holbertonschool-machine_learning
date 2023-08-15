@@ -29,34 +29,60 @@ class Yolo:
         self.anchors = anchors
 
     def process_outputs(self, outputs, image_size):
-        """Processes Outputs"""
+        """
+        Process the outputs from the Darknet model for a single image.
+
+        :param outputs: list of numpy.ndarrays containing the predictions
+        from the Darknet model for a single image
+        :param image_size: numpy.ndarray containing the image’s original
+        size [image_height, image_width]
+        :return: tuple of (boxes, box_confidences, box_class_probs)
+        """
         boxes = []
         box_confidences = []
         box_class_probs = []
-
-        img_height, img_width = image_size
-
-        for output in outputs:
-            grid_height, grid_width, num_anchors, _ = output.shape
-            box = np.zeros(output[:, :, :, :4].shape)
-            confidences = output[:, :, :, 4:5]
-            class_probs = output[:, :, :, 5:]
-
-            # Compute box coordinates relative to the original image
-            for anchor_idx in range(num_anchors):
-                box[:, :, anchor_idx, 0] = output[
-                    :, :, anchor_idx, 0] * img_width
-                box[:, :, anchor_idx, 1] = output[
-                    :, :, anchor_idx, 1] * img_height
-                box[:, :, anchor_idx, 2] = np.exp(
-                    output[:, :, anchor_idx, 2]) * self.anchors[
-                        0, anchor_idx, 0] * img_width
-                box[:, :, anchor_idx, 3] = np.exp(
-                    output[:, :, anchor_idx, 3]) * self.anchors[
-                        0, anchor_idx, 1] * img_height
-
+        for i, output in enumerate(outputs):
+            grid_height, grid_width, anchor_boxes, _ = output.shape
+            box = np.zeros((grid_height, grid_width, anchor_boxes, 4))
+            # Get the coordinates
+            t_x = output[..., 0]
+            t_y = output[..., 1]
+            t_w = output[..., 2]
+            t_h = output[..., 3]
+            # Get the anchors
+            pw = self.anchors[i, :, 0]
+            ph = self.anchors[i, :, 1]
+            # Calculate the real coordinates
+            bx = sigmoid(t_x) + np.arange(
+                grid_width).reshape(1, grid_width, 1)
+            by = sigmoid(t_y) + np.arange(
+                grid_height).reshape(grid_height, 1, 1)
+            bw = pw * np.exp(t_w)
+            bh = ph * np.exp(t_h)
+            # Normalize the coordinates
+            bx /= grid_width
+            by /= grid_height
+            bw /= self.model.input.shape[1].value
+            bh /= self.model.input.shape[2].value
+            # Calculate the coordinates relative to the image size
+            x1 = (bx - bw / 2) * image_size[1]
+            y1 = (by - bh / 2) * image_size[0]
+            x2 = (bx + bw / 2) * image_size[1]
+            y2 = (by + bh / 2) * image_size[0]
+            # Update the box with the new coordinates
+            box[..., 0] = x1
+            box[..., 1] = y1
+            box[..., 2] = x2
+            box[..., 3] = y2
             boxes.append(box)
-            box_confidences.append(confidences)
-            box_class_probs.append(class_probs)
+
+            # Get the confidences and class probabilities
+            box_confidence = sigmoid(output[..., 4])
+            box_confidences.append(
+                box_confidence.reshape(
+                    grid_height, grid_width, anchor_boxes, 1))
+
+            box_class_prob = sigmoid(output[..., 5:])
+            box_class_probs.append(box_class_prob)
 
         return boxes, box_confidences, box_class_probs
