@@ -29,7 +29,7 @@ class Yolo:
         self.anchors = anchors
 
     def process_outputs(self, outputs, image_size):
-        """Processes outputs"""
+        """Process outputs"""
         boxes = []
         box_confidences = []
         box_class_probs = []
@@ -40,43 +40,49 @@ class Yolo:
             grid_height, grid_width, num_anchors, _ = output.shape
             num_classes = output.shape[3] - 5
 
-            grid_y = np.arange(grid_height).reshape(1, grid_height, 1, 1)
-            grid_x = np.arange(grid_width).reshape(1, 1, grid_width, 1)
+            # Initialize arrays for box calculations
+            boxes_grid = np.zeros_like(
+                output[..., :4])
+            box_confidences_grid = np.zeros_like(
+                output[..., 4:5])
+            box_class_probs_grid = np.zeros_like(
+                output[..., 5:])
 
-            anchor_width = self.anchors[..., 0]
-            anchor_height = self.anchors[..., 1]
+            for i in range(grid_height):
+                for j in range(grid_width):
+                    for k in range(num_anchors):
+                        t_x = output[i, j, k, 0]
+                        t_y = output[i, j, k, 1]
+                        t_w = output[i, j, k, 2]
+                        t_h = output[i, j, k, 3]
 
-            t_x = output[..., 0]
-            t_y = output[..., 1]
-            t_w = output[..., 2]
-            t_h = output[..., 3]
-            box_confidence = output[..., 4]
-            box_class_probs = output[..., 5:]
+                        # Apply sigmoid function
+                        bx = 1 / (1 + np.exp(-t_x)) + j
+                        by = 1 / (1 + np.exp(-t_y)) + i
+                        bw = self.anchors[k, 0] * np.exp(t_w)
+                        bh = self.anchors[k, 1] * np.exp(t_h)
 
-            # Apply sigmoid function to bounding box parameters
-            t_x = 1 / (1 + np.exp(-t_x))
-            t_y = 1 / (1 + np.exp(-t_y))
-            box_confidence = 1 / (1 + np.exp(-box_confidence))
-            box_class_probs = 1 / (1 + np.exp(-box_class_probs))
+                        # Normalize coordinates to image size
+                        bx /= grid_width
+                        by /= grid_height
+                        bw /= img_width
+                        bh /= img_height
 
-            pred_boxes_x = (t_x + grid_x) / grid_width
-            pred_boxes_y = (t_y + grid_y) / grid_height
-            pred_boxes_w = anchor_width * np.exp(t_w)
-            pred_boxes_h = anchor_height * np.exp(t_h)
+                        x1 = (bx - bw / 2) * img_width
+                        y1 = (by - bh / 2) * img_height
+                        x2 = (bx + bw / 2) * img_width
+                        y2 = (by + bh / 2) * img_height
 
-            # Normalize the box coordinates to the image size
-            pred_boxes_x *= img_width
-            pred_boxes_y *= img_height
-            pred_boxes_w *= img_width
-            pred_boxes_h *= img_height
+                        boxes_grid[i, j, k] = [x1, y1, x2, y2]
+                        box_confidences_grid[
+                            i, j, k] = 1 / (1 + np.exp(
+                                -output[i, j, k, 4]))
+                        box_class_probs_grid[
+                            i, j, k] = 1 / (1 + np.exp(
+                                -output[i, j, k, 5:]))
 
-            # Append results to respective lists
-            boxes.append(np.stack([
-                pred_boxes_x,
-                pred_boxes_y,
-                pred_boxes_w,
-                pred_boxes_h], axis=-1))
-            box_confidences.append(box_confidence)
-            box_class_probs.append(box_class_probs)
+            boxes.append(boxes_grid)
+            box_confidences.append(box_confidences_grid)
+            box_class_probs.append(box_class_probs_grid)
 
         return boxes, box_confidences, box_class_probs
