@@ -163,7 +163,8 @@ class Yolo:
             sorted_indices = remaining_indices[non_overlapping_indices]
 
         # Reorder selected indices to match the original order
-        selected_indices = sorted(selected_indices)
+        selected_indices = np.lexsort(
+            (filtered_boxes[:, 1], filtered_boxes[:, 0]))
 
         # Sort the selected boxes based on their original indices
         selected_boxes = filtered_boxes[selected_indices]
