@@ -164,7 +164,8 @@ class Yolo:
 
         # Reorder selected indices to match the original order
         selected_indices = np.lexsort(
-            (filtered_boxes[:, 1], filtered_boxes[:, 0]))
+            (filtered_boxes[selected_indices, 1],
+             filtered_boxes[selected_indices, 0]))
 
         # Sort the selected boxes based on their original indices
         selected_boxes = filtered_boxes[selected_indices]
