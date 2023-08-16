@@ -130,31 +130,30 @@ class Yolo:
         return filtered_boxes, box_classes, box_scores
 
     def non_max_suppression(self, filtered_boxes, box_classes, box_scores):
-        """
-        Apply non-max suppression to filter out overlapping boxes.
-
-        :param filtered_boxes: numpy.ndarray of shape (?, 4) containing all
-        of the filtered bounding boxes
-        :param box_classes: numpy.ndarray of shape (?,) containing the class
-        number for the class that filtered_boxes predicts, respectively
-        :param box_scores: numpy.ndarray of shape (?) containing the box scores
-        for each box in filtered_boxes, respectively
-        :return: tuple of (box_predictions, predicted_box_classes,
-        predicted_box_scores)
-        """
         selected_indices = []
 
-        # Sort the boxes based on their class and box score
-        sorted_indices = np.lexsort((box_scores, box_classes))
+        for i in np.unique(box_classes):
+            idx = np.where(box_classes == i)
+            class_filtered_boxes = filtered_boxes[idx]
+            class_box_scores = box_scores[idx]
+            keep = self._apply_nms(class_filtered_boxes, class_box_scores)
+
+            selected_indices.extend(idx[0][keep])
+
+        selected_boxes = filtered_boxes[selected_indices]
+        selected_classes = box_classes[selected_indices]
+        selected_scores = box_scores[selected_indices]
+
+        return selected_boxes, selected_classes, selected_scores
+
+    def _apply_nms(self, filtered_boxes, box_scores):
+        sorted_indices = np.argsort(box_scores)[::-1]
+        keep = []
 
         while sorted_indices.size > 0:
-            best_box_idx = sorted_indices[-1]
-            selected_indices.append(best_box_idx)
-
-            if len(sorted_indices) == 1:
-                break
-
-            remaining_indices = sorted_indices[:-1]
+            best_box_idx = sorted_indices[0]
+            keep.append(best_box_idx)
+            remaining_indices = sorted_indices[1:]
             best_box = filtered_boxes[best_box_idx]
             remaining_boxes = filtered_boxes[remaining_indices]
             overlaps = self._calculate_iou(best_box, remaining_boxes)
@@ -163,11 +162,7 @@ class Yolo:
             non_overlapping_indices = np.where(overlaps < self.nms_t)[0]
             sorted_indices = remaining_indices[non_overlapping_indices]
 
-        selected_boxes = filtered_boxes[selected_indices]
-        selected_classes = box_classes[selected_indices]
-        selected_scores = box_scores[selected_indices]
-
-        return selected_boxes, selected_classes, selected_scores
+        return keep
 
     def _calculate_iou(self, box, boxes):
         """
