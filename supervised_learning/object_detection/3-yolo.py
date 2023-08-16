@@ -165,15 +165,10 @@ class Yolo:
         # Reorder selected indices to match the original order
         selected_indices = sorted(selected_indices)
 
-        # Sort the selected indices based on scores in descending order
-        sorted_selected_indices = np.argsort(selected_scores)[::-1]
-
-        selected_boxes = filtered_boxes[
-            selected_indices][sorted_selected_indices]
-        selected_classes = box_classes[
-            selected_indices][sorted_selected_indices]
-        selected_scores = box_scores[
-            selected_indices][sorted_selected_indices]
+        # Sort the selected boxes based on their original indices
+        selected_boxes = filtered_boxes[selected_indices]
+        selected_classes = box_classes[selected_indices]
+        selected_scores = box_scores[selected_indices]
 
         return selected_boxes, selected_classes, selected_scores
 
