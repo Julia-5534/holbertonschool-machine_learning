@@ -225,8 +225,8 @@ class Yolo:
         pimages: a numpy.ndarray of shape (ni, input_h, input_w, 3)
         containing all of the preprocessed images
         ni: the number of images that were preprocessed
-        input_h: input height for Darknet model - this can vary by model
-        input_w: input width for Darknet model - this can vary by model
+        input_h: the input height for the Darknet model
+        input_w: the input width for the Darknet model
         3: number of color channels
         image_shapes: a numpy.ndarray of shape (ni, 2) containing
         the original height and width of the images
