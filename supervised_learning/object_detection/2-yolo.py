@@ -93,6 +93,7 @@ class Yolo:
         return boxes, box_confidences, box_class_probs
 
     def filter_boxes(self, boxes, box_confidences, box_class_probs):
+        """Filter Boxes PLACEHOLDER"""
         filtered_boxes = []
         box_classes = []
         box_scores = []
@@ -102,7 +103,7 @@ class Yolo:
             box_confidence = box_confidences[i]
             box_class_prob = box_class_probs[i]
 
-            # Compute box scores
+            # box_score calculation
             box_score = box_confidence * box_class_prob
             box_classes_idx = np.argmax(box_score, axis=-1)
             box_class_scores = np.max(box_score, axis=-1)
@@ -111,45 +112,13 @@ class Yolo:
             mask = box_class_scores >= self.class_t
             filtered_box_scores = box_class_scores[mask]
             filtered_box_classes_idx = box_classes_idx[mask]
-            filtered_box_coords = box[mask]
-
-            # NMS
-            keep = []
-
-            while filtered_box_scores.size > 0:
-                best_idx = np.argmax(filtered_box_scores)
-                best_box = filtered_box_coords[best_idx]
-
-                keep.append(best_idx)
-
-                overlap_x1 = np.maximum(
-                    filtered_box_coords[:, 0], best_box[0])
-                overlap_y1 = np.maximum(
-                    filtered_box_coords[:, 1], best_box[1])
-                overlap_x2 = np.minimum(
-                    filtered_box_coords[:, 2], best_box[2])
-                overlap_y2 = np.minimum(
-                    filtered_box_coords[:, 3], best_box[3])
-
-                overlap_widths = np.maximum(0, overlap_x2 - overlap_x1)
-                overlap_heights = np.maximum(0, overlap_y2 - overlap_y1)
-
-                overlaps = (overlap_widths * overlap_heights) / (
-                    (filtered_box_coords[:, 2] - filtered_box_coords[:, 0]) *
-                    (filtered_box_coords[:, 3] - filtered_box_coords[:, 1])
-                    + (best_box[2] - best_box[0]) *
-                    (best_box[3] - best_box[1]) -
-                    (overlap_widths * overlap_heights))
-
-                mask = overlaps <= self.nms_t
-                filtered_box_scores = filtered_box_scores[mask]
-                filtered_box_classes_idx = filtered_box_classes_idx[mask]
-                filtered_box_coords = filtered_box_coords[mask]
+            filtered_box_coords = box[mask][mask]
 
             filtered_boxes.extend(filtered_box_coords)
             box_classes.extend(filtered_box_classes_idx)
             box_scores.extend(filtered_box_scores)
 
+        # Convert the lists to arrays after the loop
         filtered_boxes = np.array(filtered_boxes)
         box_classes = np.array(box_classes)
         box_scores = np.array(box_scores)
