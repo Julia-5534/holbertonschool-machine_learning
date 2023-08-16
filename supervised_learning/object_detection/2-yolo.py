@@ -112,7 +112,7 @@ class Yolo:
             mask = box_class_scores >= self.class_t
             filtered_box_scores = box_class_scores[mask]
             filtered_box_classes_idx = box_classes_idx[mask]
-            filtered_box_coords = box[mask][..., :4][mask]
+            filtered_box_coords = box[mask][mask, :4]
 
             filtered_boxes.extend(filtered_box_coords)
             box_classes.extend(filtered_box_classes_idx)
