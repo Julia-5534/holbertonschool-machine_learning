@@ -6,6 +6,7 @@ from tensorflow import keras as K
 
 
 def sigmoid(x):
+    """Sigmoid Function"""
     return 1 / (1 + np.exp(-x))
 
 
