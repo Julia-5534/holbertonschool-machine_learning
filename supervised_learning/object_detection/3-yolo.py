@@ -162,15 +162,18 @@ class Yolo:
             non_overlapping_indices = np.where(overlaps < self.nms_t)[0]
             sorted_indices = remaining_indices[non_overlapping_indices]
 
-        # Reorder selected indices to match the original order
-        selected_indices = np.lexsort(
-            (filtered_boxes[selected_indices, 0],
-             filtered_boxes[selected_indices, 1]))
+        # Get the original indices
+        original_indices = p[selected_indices]
+        # Sort based on original indices
+        selected_indices_sorted = np.argsort(original_indices)
 
-        # Sort the selected boxes based on their original indices
-        selected_boxes = filtered_boxes[selected_indices]
-        selected_classes = box_classes[selected_indices]
-        selected_scores = box_scores[selected_indices]
+        # Use the sorted indices to reorder the selected arrays
+        selected_boxes = filtered_boxes[
+            selected_indices][selected_indices_sorted]
+        selected_classes = box_classes[
+            selected_indices][selected_indices_sorted]
+        selected_scores = box_scores[
+            selected_indices][selected_indices_sorted]
 
         return selected_boxes, selected_classes, selected_scores
 
