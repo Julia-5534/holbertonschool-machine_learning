@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Task 5"""
 
+import cv2
 import numpy as np
 from tensorflow import keras as K
 
@@ -232,24 +233,29 @@ class Yolo:
         original height and width of the images
         2 => (image_height, image_width)
         """
-        import cv2
-        import numpy as np
+        # Init empty lists to store preprocessed images & original shapes
+        pimages = []  # Stores preprocessed images
+        shapes = []  # Stores original shapes
 
-        ni = len(images)
-        pimages = []
-        image_shapes = np.zeros((ni, 2))
+        # Get the input dimensions from the model's input shape
+        input_h = self.model.input.shape[2].value
+        input_w = self.model.input.shape[1].value
 
-        for i, image in enumerate(images):
-            image_shapes[i] = image.shape[:2]
-            # Resize the images with inter-cubic interpolation
-            new_image = cv2.resize(
-                image, (self.input_w, self.input_h),
-                interpolation=cv2.INTER_CUBIC)
-            # Rescale all images to have pixel values in the range [0, 1]
-            new_image = new_image / 255.0
-            pimages.append(new_image)
+        # Loop through each image in the input list
+        for i in images:
+            # Get the original shape of the image
+            img_shape = i.shape[0], i.shape[1]
+            shapes.append(img_shape)  # Store the original shape
+            # Resize the image using inter-cubic interpolation
+            image = cv2.resize(i, (input_w, input_h),
+                               interpolation=cv2.INTER_CUBIC)
+            # Normalize pixel values to the range [0, 1]
+            image = image / 255.0  # Floating-point division
+            # Append the preprocessed image to the pimages list
+            pimages.append(image)
 
-        # Convert the list of images to a numpy array
-        pimages = np.stack(pimages, axis=0)
+        # Convert the lists to numpy arrays
+        pimages = np.array(pimages)  # Preprocessed images
+        image_shapes = np.array(shapes)  # Original image shapes
 
         return pimages, image_shapes
