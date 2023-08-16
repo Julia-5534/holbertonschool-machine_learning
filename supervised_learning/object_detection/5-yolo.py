@@ -246,9 +246,10 @@ class Yolo:
                 image, (self.input_w, self.input_h),
                 interpolation=cv2.INTER_CUBIC)
             # Rescale all images to have pixel values in the range [0, 1]
-            new_image = new_image / 255
+            new_image = new_image / 255.0
             pimages.append(new_image)
 
+        # Convert the list of images to a numpy array
         pimages = np.stack(pimages, axis=0)
 
         return pimages, image_shapes
