@@ -93,34 +93,38 @@ class Yolo:
         return boxes, box_confidences, box_class_probs
 
     def filter_boxes(self, boxes, box_confidences, box_class_probs):
-        """Filter Boxes PLACEHOLDER"""
+        """
+        Filter boxes based on their objectness score and class probabilities.
+
+        :param boxes: list of numpy.ndarrays of shape (grid_height, grid_width,
+        anchor_boxes, 4) containing processed boundary boxes for each output,
+        respectively
+        :param box_confidences: list of numpy.ndarrays of shape (grid_height,
+        grid_width, anchor_boxes, 1) containing processed box confidences for
+        each output, respectively
+        :param box_class_probs: list of numpy.ndarrays of shape (grid_height,
+        grid_width, anchor_boxes, classes) containing the processed box class
+        probabilities for each output, respectively
+        :return: tuple of (filtered_boxes, box_classes, box_scores)
+        """
         filtered_boxes = []
         box_classes = []
         box_scores = []
-
         for i in range(len(boxes)):
-            box = boxes[i]
-            box_confidence = box_confidences[i]
-            box_class_prob = box_class_probs[i]
+            # Calculate the objectness score for each box
+            obj_score = box_confidences[i] * box_class_probs[i]
+            # Find the class with the highest score for each box
+            max_scores = np.max(obj_score, axis=-1)
+            max_classes = np.argmax(obj_score, axis=-1)
+            # Filter out the boxes with a low objectness score
+            mask = max_scores >= self.class_t
+            filtered_boxes.append(boxes[i][mask])
+            box_classes.append(max_classes[mask])
+            box_scores.append(max_scores[mask])
 
-            # box_score calculation
-            box_score = box_confidence * box_class_prob
-            box_classes_idx = np.argmax(box_score, axis=-1)
-            box_class_scores = np.max(box_score, axis=-1)
-
-            # Apply class score threshold
-            mask = box_class_scores >= self.class_t
-            filtered_box_scores = box_class_scores[mask]
-            filtered_box_classes_idx = box_classes_idx[mask]
-            filtered_box_coords = box[mask][mask, :4]
-
-            filtered_boxes.extend(filtered_box_coords)
-            box_classes.extend(filtered_box_classes_idx)
-            box_scores.extend(filtered_box_scores)
-
-        # Convert the lists to arrays after the loop
-        filtered_boxes = np.array(filtered_boxes)
-        box_classes = np.array(box_classes)
-        box_scores = np.array(box_scores)
+        # Concatenate all the filtered boxes into a single array
+        filtered_boxes = np.concatenate(filtered_boxes)
+        box_classes = np.concatenate(box_classes)
+        box_scores = np.concatenate(box_scores)
 
         return filtered_boxes, box_classes, box_scores
