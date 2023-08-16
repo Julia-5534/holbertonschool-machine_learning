@@ -130,6 +130,7 @@ class Yolo:
         return filtered_boxes, box_classes, box_scores
 
     def non_max_suppression(self, filtered_boxes, box_classes, box_scores):
+        """Non Max PLACEHOLDER"""
         selected_indices = []
 
         for i in np.unique(box_classes):
