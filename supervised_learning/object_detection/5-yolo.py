@@ -218,36 +218,37 @@ class Yolo:
 
     def preprocess_images(self, images):
         """
-        Preprocess a list of images for input to the Darknet model.
+        Preprocess images by resizing and rescaling.
 
         :param images: a list of images as numpy.ndarrays
         :return: a tuple of (pimages, image_shapes)
         pimages: a numpy.ndarray of shape (ni, input_h, input_w, 3)
         containing all of the preprocessed images
         ni: the number of images that were preprocessed
-        input_h: the input height for the Darknet model
-        input_w: the input width for the Darknet model
+        input_h: the input height for the Darknet model - can vary by model
+        input_w: the input width for the Darknet model - can vary by model
         3: number of color channels
-        image_shapes: a numpy.ndarray of shape (ni, 2) containing
-        the original height and width of the images
+        image_shapes: a numpy.ndarray of shape (ni, 2) containing the
+        original height and width of the images
         2 => (image_height, image_width)
         """
-        input_h = self.model.input.shape[1].value
-        input_w = self.model.input.shape[2].value
+        import cv2
+        import numpy as np
 
+        ni = len(images)
         pimages = []
-        image_shapes = []
+        image_shapes = np.zeros((ni, 2))
 
-        for image in images:
-            original_height, original_width, _ = image.shape
-            resized_image = cv2.resize(
-                image, (input_w, input_h), interpolation=cv2.INTER_CUBIC)
-            rescaled_image = resized_image / 255.0  # Rescale to [0, 1]
+        for i, image in enumerate(images):
+            image_shapes[i] = image.shape[:2]
+            # Resize the images with inter-cubic interpolation
+            new_image = cv2.resize(
+                image, (self.input_w, self.input_h),
+                interpolation=cv2.INTER_CUBIC)
+            # Rescale all images to have pixel values in the range [0, 1]
+            new_image = new_image / 255
+            pimages.append(new_image)
 
-            pimages.append(rescaled_image)
-            image_shapes.append((original_height, original_width))
-
-        pimages = np.array(pimages)
-        image_shapes = np.array(image_shapes)
+        pimages = np.stack(pimages, axis=0)
 
         return pimages, image_shapes
