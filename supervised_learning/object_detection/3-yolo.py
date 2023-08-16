@@ -131,32 +131,62 @@ class Yolo:
 
     def non_max_suppression(self, filtered_boxes, box_classes, box_scores):
         """
-        Perform non-max suppression on the boundary boxes.
+        Apply non-max suppression to filter out overlapping boxes.
 
-        :param filtered_boxes: a numpy.ndarray of shape (?, 4) containing all
+        :param filtered_boxes: numpy.ndarray of shape (?, 4) containing all
         of the filtered bounding boxes
-        :param box_classes: a numpy.ndarray of shape (?,) containing the class
+        :param box_classes: numpy.ndarray of shape (?,) containing the class
         number for the class that filtered_boxes predicts, respectively
-        :param box_scores: a numpy.ndarray of shape (?) containing the box
-        scores for each box in filtered_boxes, respectively
+        :param box_scores: numpy.ndarray of shape (?) containing the box scores
+        for each box in filtered_boxes, respectively
         :return: tuple of (box_predictions, predicted_box_classes,
         predicted_box_scores)
         """
-        box_predictions = []
-        predicted_box_classes = []
-        predicted_box_scores = []
-        for c in set(box_classes):
-            idxs = np.where(box_classes == c)
-            filtered_boxes_c = filtered_boxes[idxs]
-            box_scores_c = box_scores[idxs]
-            box_classes_c = box_classes[idxs]
-            idxs = K.backend.nms(filtered_boxes_c, box_scores_c,
-                                 self.nms_t)
-            box_predictions.append(filtered_boxes_c[idxs])
-            predicted_box_classes.append(box_classes_c[idxs])
-            predicted_box_scores.append(box_scores_c[idxs])
-        box_predictions = np.concatenate(box_predictions)
-        predicted_box_classes = np.concatenate(predicted_box_classes)
-        predicted_box_scores = np.concatenate(predicted_box_scores)
+        # Apply non-max suppression algorithm
+        selected_indices = []
+        sorted_indices = np.argsort(box_scores)[::-1]
 
-        return (box_predictions, predicted_box_classes, predicted_box_scores)
+        while sorted_indices.size > 0:
+            best_box_idx = sorted_indices[0]
+            selected_indices.append(best_box_idx)
+
+            if len(sorted_indices) == 1:
+                break
+
+            remaining_indices = sorted_indices[1:]
+            best_box = filtered_boxes[best_box_idx]
+            remaining_boxes = filtered_boxes[remaining_indices]
+            overlaps = self._calculate_iou(best_box, remaining_boxes)
+
+            # Discard boxes with high IOU
+            non_overlapping_indices = np.where(overlaps < self.nms_t)[0]
+            sorted_indices = remaining_indices[non_overlapping_indices]
+
+        selected_boxes = filtered_boxes[selected_indices]
+        selected_classes = box_classes[selected_indices]
+        selected_scores = box_scores[selected_indices]
+
+        return selected_boxes, selected_classes, selected_scores
+
+    def _calculate_iou(self, box, boxes):
+        """
+        Calculate Intersection over Union between a box & a list of boxes.
+
+        :param box: numpy.ndarray of shape (4,) containing the coordinates of
+        the first box (x1, y1, x2, y2)
+        :param boxes: numpy.ndarray of shape (n, 4) containing the coordinates
+        of the n boxes to calculate IoU with
+        :return: numpy.ndarray of shape (n,) containing the calculated IoUs
+        """
+        x1 = np.maximum(box[0], boxes[:, 0])
+        y1 = np.maximum(box[1], boxes[:, 1])
+        x2 = np.minimum(box[2], boxes[:, 2])
+        y2 = np.minimum(box[3], boxes[:, 3])
+
+        intersection_area = np.maximum(0, x2 - x1) * np.maximum(0, y2 - y1)
+        box_area = (box[2] - box[0]) * (box[3] - box[1])
+        boxes_area = (boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1])
+
+        iou = intersection_area / (
+            box_area + boxes_area - intersection_area + 1e-9)
+        return iou
