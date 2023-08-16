@@ -142,10 +142,15 @@ class Yolo:
         :return: tuple of (box_predictions, predicted_box_classes,
         predicted_box_scores)
         """
-        # Apply non-max suppression algorithm
-        selected_indices = []
+        # Sort the indices based on scores in descending order
         sorted_indices = np.argsort(box_scores)[::-1]
 
+        filtered_boxes = filtered_boxes[sorted_indices]
+        box_classes = box_classes[sorted_indices]
+        box_scores = box_scores[sorted_indices]
+
+        # Apply non-max suppression algorithm
+        selected_indices = []
         while sorted_indices.size > 0:
             best_box_idx = sorted_indices[0]
             selected_indices.append(best_box_idx)
@@ -163,11 +168,7 @@ class Yolo:
             sorted_indices = remaining_indices[non_overlapping_indices]
 
         # Reorder selected indices to match the original order
-        selected_indices = np.lexsort(
-            (filtered_boxes[selected_indices, 0],
-             filtered_boxes[selected_indices, 1]))
-
-        # Sort the selected boxes based on their original indices
+        selected_indices = np.argsort(selected_indices)
         selected_boxes = filtered_boxes[selected_indices]
         selected_classes = box_classes[selected_indices]
         selected_scores = box_scores[selected_indices]
