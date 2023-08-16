@@ -5,6 +5,10 @@ import numpy as np
 from tensorflow import keras as K
 
 
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+
 class Yolo:
     """Yolo Class"""
     def __init__(self, model_path, classes_path, class_t, nms_t, anchors):
