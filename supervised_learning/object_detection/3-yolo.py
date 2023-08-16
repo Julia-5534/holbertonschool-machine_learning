@@ -148,6 +148,7 @@ class Yolo:
         return selected_boxes, selected_classes, selected_scores
 
     def _apply_nms(self, filtered_boxes, box_scores):
+        """Applies Non Max Suppression"""
         sorted_indices = np.argsort(box_scores)[::-1]
         keep = []
 
