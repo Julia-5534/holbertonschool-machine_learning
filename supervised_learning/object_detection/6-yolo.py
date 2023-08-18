@@ -291,12 +291,6 @@ class Yolo:
                 int(box[0]),
                 int(box[1]) - 5)  # 5 pixels above the top left corner
 
-            # Draw text background
-            cv2.rectangle(
-                image, (text_origin[0], text_origin[1] - text_size[1]),
-                (text_origin[0] + text_size[0], text_origin[1]),
-                color, cv2.FILLED)
-
             # Put text on the image
             cv2.putText(image,
                         text,
