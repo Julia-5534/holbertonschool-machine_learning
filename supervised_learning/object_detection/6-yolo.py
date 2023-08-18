@@ -236,8 +236,8 @@ class Yolo:
         shapes = []  # Stores original shapes
 
         # Get the input dimensions from the model's input shape
-        input_h = self.model.input.shape[2].value
-        input_w = self.model.input.shape[1].value
+        input_h = self.model.input.shape[2]
+        input_w = self.model.input.shape[1]
 
         # Loop through each image in the input list
         for i in images:
