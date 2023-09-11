@@ -128,20 +128,19 @@ def definiteness(matrix):
 
     eigenvalues = np.linalg.eigvals(matrix)
     pos_eigenvalues = np.sum(eigenvalues > 0)
+    neg_eigenvalues = np.sum(eigenvalues < 0)
     zero_eigenvalues = np.sum(
         np.isclose(eigenvalues, 0, rtol=1e-05, atol=1e-08))
 
-    if pos_eigenvalues == matrix.shape[0]:
-        return "Positive definite"
-    elif pos_eigenvalues > 0 and zero_eigenvalues > 0:
-        return "Positive semi-definite"
-    elif zero_eigenvalues == matrix.shape[0]:
+    if pos_eigenvalues > 0 and neg_eigenvalues > 0:
         return "Indefinite"
-    elif pos_eigenvalues == 0:
-        neg_eigenvalues = np.sum(eigenvalues < 0)
-        if neg_eigenvalues == matrix.shape[0]:
-            return "Negative definite"
-        elif neg_eigenvalues > 0:
-            return "Negative semi-definite"
+    elif pos_eigenvalues == matrix.shape[0]:
+        return "Positive definite"
+    elif neg_eigenvalues == matrix.shape[0]:
+        return "Negative definite"
+    elif pos_eigenvalues > 0:
+        return "Positive semi-definite"
+    elif neg_eigenvalues > 0:
+        return "Negative semi-definite"
 
     return None
