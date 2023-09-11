@@ -123,9 +123,13 @@ def definiteness(matrix):
     if matrix.ndim != 2 or matrix.shape[0] != matrix.shape[1]:
         return None
 
+    if not np.allclose(matrix, matrix.T, rtol=1e-05, atol=1e-08):
+        return None  # Not symmetric
+
     eigenvalues = np.linalg.eigvals(matrix)
     pos_eigenvalues = np.sum(eigenvalues > 0)
-    zero_eigenvalues = np.sum(eigenvalues == 0)
+    zero_eigenvalues = np.sum(
+        np.isclose(eigenvalues, 0, rtol=1e-05, atol=1e-08))
 
     if pos_eigenvalues == matrix.shape[0]:
         return "Positive definite"
