@@ -41,4 +41,4 @@ class MultiNormal:
         exponent = -0.5 * x_minus_mean.T @ inv_cov @ x_minus_mean
         normalization = 1 / ((2 * np.pi) ** (d / 2) * np.sqrt(det_cov))
 
-        return '{:.19f}'.format(normalization * np.exp(exponent)[0, 0])
+        return '{:g}'.format(normalization * np.exp(exponent)[0, 0])
