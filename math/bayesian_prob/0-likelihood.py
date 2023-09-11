@@ -48,7 +48,7 @@ def likelihood(x, n, P):
 
     # Calculate the likelihood for each probability in P
     likelihoods = np.array([
-        np.math.comb(n, x) * (p**x) * ((
+        comb(n, x) * (p**x) * ((
             1 - p)**(n - x)) for p in P])
 
     return likelihoods
