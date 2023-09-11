@@ -116,6 +116,7 @@ def inverse(matrix):
 
 
 def definiteness(matrix):
+    """Calculates the Definiteness of a matrix"""
     if not isinstance(matrix, np.ndarray):
         raise TypeError("matrix must be a numpy.ndarray")
 
