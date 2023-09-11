@@ -4,6 +4,24 @@
 import numpy as np
 
 
+def comb(n, k):
+    """
+    Calculate the binomial coefficient C(n, k).
+
+    Parameters:
+    - n: Total number of items.
+    - k: Number of items to choose.
+
+    Returns:
+    - Binomial coefficient C(n, k).
+    """
+    if 0 <= k <= n:
+        return np.math.factorial(n) // (
+            np.math.factorial(k) * np.math.factorial(n - k))
+    else:
+        return 0
+
+
 def likelihood(x, n, P):
     """Calculates the likelihood of obtaining this data given
     various hypothetical probabilities of developing severe side effects"""
