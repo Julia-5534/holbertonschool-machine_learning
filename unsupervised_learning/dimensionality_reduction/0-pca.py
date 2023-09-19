@@ -5,6 +5,7 @@ import numpy as np
 
 
 def pca(X, var=0.95):
+    """Placeholder"""
     # Calculate covariance matrix
     covariance_matrix = np.cov(X, rowvar=False)
 
