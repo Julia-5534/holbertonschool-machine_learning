@@ -6,7 +6,7 @@ import numpy as np
 
 def pca(X, var=0.95):
     """Perform Principal Component Analysis"""
-    _, S, Vt = np.linalg.svd(X, full_matrices=False)
+    B, S, Vt = np.linalg.svd(X, full_matrices=False)
 
     # Compute explained variance ratio
     explained_variance_ratio = (S ** 2) / np.sum(S ** 2)
@@ -18,6 +18,6 @@ def pca(X, var=0.95):
     nd = np.argmax(cum_explained_variance >= var) + 1
 
     # Return the weights matrix
-    W = Vt[:nd, :].T
+    W = Vt[:nd + 1].T
 
     return W
