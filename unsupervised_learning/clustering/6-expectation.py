@@ -27,8 +27,8 @@ def expectation(X, pi, m, S):
     k = pi.shape[0]
 
     g = np.zeros((k, n))
-    l = 0
 
+    P = np.zeros((k, n))
     for i in range(k):
         P = pi[i] * pdf(X, m[i], S[i])
         g[i] = P
@@ -36,6 +36,6 @@ def expectation(X, pi, m, S):
     g_sum = np.sum(g, axis=0)
     g /= g_sum
 
-    l = np.sum(np.log(g_sum))
+    l_unambig = np.sum(np.log(g_sum))
 
-    return g, l
+    return g, l_unambig
