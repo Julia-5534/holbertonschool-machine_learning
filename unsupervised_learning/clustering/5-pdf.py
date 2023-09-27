@@ -13,8 +13,12 @@ def pdf(X, m, S):
     ):
         return None
 
-    if X.ndim == 1:
-        X = np.expand_dims(X, axis=0)  # Make X 2-dimensional
+    if (
+        len(X.shape) != 2 or
+        len(S.shape) != 2 or
+        len(m.shape) != 1
+    ):
+        return None
 
     _, d = X.shape
     if m.shape[0] != d or S.shape[0] != d or S.shape[1] != d:
