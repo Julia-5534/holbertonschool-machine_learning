@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+"""Task 5"""
+
+import numpy as np
+
+
+def pdf(X, m, S):
+    if (
+        type(X) is not np.ndarray or
+        type(m) is not np.ndarray or
+        type(S) is not np.ndarray
+    ):
+        return None
+
+    n, d = X.shape
+    if m.shape != (d,) or S.shape != (d, d):
+        return None
+
+    if not np.allclose(S, S.T):
+        return None
+
+    det_S = np.linalg.det(S)
+    if det_S <= 0:
+        return None
+
+    inv_S = np.linalg.inv(S)
+    diff = X - m
+
+    normalization = 1.0 / (np.sqrt((2 * np.pi) ** d * det_S))
+    exponent = -0.5 * np.sum(np.dot(diff, inv_S) * diff, axis=1)
+    P = normalization * np.exp(exponent)
+
+    P = np.maximum(P, 1e-300)  # Set a minimum value
+
+    return P
