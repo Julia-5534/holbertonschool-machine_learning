@@ -13,6 +13,9 @@ def pdf(X, m, S):
     ):
         return None
 
+    if X.ndim == 1:
+        X = np.expand_dims(X, axis=0)  # Make X 2-dimensional
+
     n, d = X.shape
     if m.shape != (d,) or S.shape != (d, d):
         return None
