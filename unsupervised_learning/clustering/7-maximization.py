@@ -5,6 +5,7 @@ import numpy as np
 
 
 def maximization(X, g):
+    """Placeholder"""
     try:
         k, n = g.shape
         n, d = X.shape
