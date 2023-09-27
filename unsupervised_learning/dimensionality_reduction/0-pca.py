@@ -19,5 +19,5 @@ def pca(X, var=0.95):
 
     # Return the weights matrix
     W = Vt[:nd, :].T
-    
+
     return W
