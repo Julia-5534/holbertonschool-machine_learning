@@ -16,20 +16,20 @@ def initialize(X, k):
             - pi: Prior probabilities for each cluster, shape (k,).
             - m: Centroid means for each cluster, shape (k, d).
             - S: Covariance matrices for each cluster, shape (k, d, d)."""
-    if not isinstance(X, np.ndarray) or len(X.shape) != 2:
+    if not isinstance(X, np.ndarray) or X.ndim != 2:
         return None, None, None
-    if not isinstance(k, int) or k <= 0 or k >= X.shape[0]:
+    if not isinstance(k, int) or k <= 0:
         return None, None, None
 
     n, d = X.shape
 
     # Initialize pi evenly
-    pi = np.full((k,), 1.0 / k)
+    pi = np.full(k, 1 / k)
 
     # Initialize m
-    m = kmeans(X, k)
+    m, _ = kmeans(X, k)
 
     # Initialize S as identity matrices
-    S = np.tile(np.eye(d), (k, 1, 1))
+    S = np.tile(np.identity(d), (k, 1, 1))
 
     return pi, m, S
