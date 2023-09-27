@@ -5,6 +5,7 @@ import numpy as np
 
 
 def pdf(X, m, S):
+    """Placeholder"""
     if (
         type(X) is not np.ndarray or
         type(m) is not np.ndarray or
@@ -14,6 +15,9 @@ def pdf(X, m, S):
 
     n, d = X.shape
     if m.shape != (d,) or S.shape != (d, d):
+        return None
+
+    if X.ndim != 2:
         return None
 
     if not np.allclose(S, S.T):
