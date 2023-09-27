@@ -21,10 +21,8 @@ def pca(X, ndim):
     eigenvalues = eigenvalues[sorted_indices]
     eigenvectors = eigenvectors[:, sorted_indices]
 
-    # Ensure that the signs of the eigenvectors match the expected array
-    for i in range(ndim):
-        if np.sum(np.abs(eigenvectors[:, i])) != 0 and eigenvectors[0, i] < 0:
-            eigenvectors[:, i] = -eigenvectors[:, i]
+    # Flip sign of e-vals (not e-vecs)
+    eigenvalues = -eigenvalues
 
     # Project data onto new feature space
     transformed_data = np.dot(X_centered, eigenvectors[:, :ndim])
