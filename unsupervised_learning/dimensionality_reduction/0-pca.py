@@ -5,26 +5,19 @@ import numpy as np
 
 
 def pca(X, var=0.95):
-    """Placeholder"""
-    # Calculate covariance matrix
-    covariance_matrix = np.cov(X, rowvar=False)
+    """Perform Singular Value Decomposition"""
+    _, S, Vt = np.linalg.svd(X, full_matrices=False)
 
-    # Compute eigenvalues & eigenvectors
-    eigenvalues, eigenvectors = np.linalg.eigh(covariance_matrix)
+    # Compute explained variance ratio
+    explained_variance_ratio = (S ** 2) / np.sum(S ** 2)
 
-    # Sort eigenvalues & eigenvectors in descending order
-    sorted_indices = np.argsort(eigenvalues)[::-1]
-    sorted_eigenvalues = eigenvalues[sorted_indices]
-    sorted_eigenvectors = eigenvectors[:, sorted_indices]
+    # Compute cumulative sum of explained variance
+    cum_explained_variance = np.cumsum(explained_variance_ratio)
 
-    # Compute cumulative sum of eigenvalues
-    cumul_eigenvalues = np.cumsum(sorted_eigenvalues)
+    # Find number of components needed to maintain given variance
+    nd = np.argmax(cum_explained_variance >= var) + 1
 
-    # Compute total sum of eigenvalues
-    total_eigenvalues = np.sum(sorted_eigenvalues)
+    # Return the weights matrix
+    W = Vt[:nd].T
 
-    # Find number of eigenvalues that maintain the given variance
-    ndim = np.argmax(cumul_eigenvalues / total_eigenvalues >= var) + 1
-
-    # Select top ndim eigenvectors
-    return sorted_eigenvectors[:, :ndim]
+    return W
