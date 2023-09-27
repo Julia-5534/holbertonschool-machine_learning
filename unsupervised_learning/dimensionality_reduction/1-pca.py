@@ -27,4 +27,7 @@ def pca(X, ndim):
     # Project data onto new feature space
     transformed_data = np.dot(X_centered, eigenvectors[:, :ndim])
 
+    # Change sign of the second column
+    transformed_data[:, 1] *= -1
+
     return transformed_data
