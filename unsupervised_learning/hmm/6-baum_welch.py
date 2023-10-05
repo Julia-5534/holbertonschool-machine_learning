@@ -26,6 +26,7 @@ def forward(Observation, Emission, Transition, Initial):
             F[n, t] = np.sum(Transitions * Emission_prob)
     return F
 
+
 def backward(Observation, Emission, Transition):
     """Performs backward algorithm for a hidden Markov model"""
     # Shape of the Emission array
@@ -46,6 +47,7 @@ def backward(Observation, Emission, Transition):
             Transitions = Transition[n, :] * Emission[:, Observation[t + 1]]
             B[n, t] = np.sum(Transitions * B[:, t + 1])
     return B
+
 
 def baum_welch(Observations, Transition, Emission, Initial, iterations=1000):
     """Performs Baum-Welch algorithm for a hidden Markov model"""
@@ -71,27 +73,27 @@ def baum_welch(Observations, Transition, Emission, Initial, iterations=1000):
                     :, Observations[t + 1]].T, B[:, t + 1])
             for i in range(N):
                 numerator = F[
-                    i, t] * Transition[i,:] * Emission[
+                    i, t] * Transition[i, :] * Emission[
                         :, Observations[t + 1]].T * B[:, t + 1].T
                 xi[i, :, t] = numerator / denominator
 
-        gamma = np.sum(xi,axis=1)
+        gamma = np.sum(xi, axis=1)
 
         # Update transition matrix
-        Transition = np.sum(xi,axis=2) / np.sum(
-            gamma,axis=1).reshape((-1,1))
+        Transition = np.sum(xi, axis=2) / np.sum(
+            gamma, axis=1).reshape((-1, 1))
 
         gamma = np.hstack((
-            gamma,np.sum(xi[:,:,T - 2],axis=0).reshape((-1,1))))
+            gamma, np.sum(xi[:, :, T - 2], axis=0).reshape((-1, 1))))
 
-        K = np.zeros((N,M))
+        K = np.zeros((N, M))
 
         # Update emission matrix
         for n in range(N):
             for m in range(M):
-                K[n,m] = np.sum(
-                    gamma[n,Observations == m]) / np.sum(gamma[n,:])
+                K[n, m] = np.sum(
+                    gamma[n, Observations == m]) / np.sum(gamma[n, :])
 
         Emission = K
 
-    return Transition,Emission
+    return Transition, Emission
