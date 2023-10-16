@@ -16,8 +16,8 @@ class BayesianOptimization:
         self.xsi = xsi
         self.minimize = minimize
 
-    def acquire(self):
-        """Calculates acquire function values for
+    def acquisition(self):
+        """Calculates acquisition function values for
         all points in the search space"""
         mu_s, sigma_s = self.gp.predict(self.X_s)
         if self.minimize:
