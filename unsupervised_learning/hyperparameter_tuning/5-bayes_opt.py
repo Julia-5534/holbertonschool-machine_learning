@@ -43,6 +43,8 @@ class BayesianOptimization:
         for _ in range(iterations):
             next_sample, _ = self.acquisition()
             if np.any(np.isclose(self.gp.X, next_sample)):
+                continue
+            else:
                 break
 
         next_output = self.f(next_sample)
