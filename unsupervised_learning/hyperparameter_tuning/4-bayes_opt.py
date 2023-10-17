@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Task 3"""
+"""Task 4"""
 
 import numpy as np
 from scipy.stats import norm
