@@ -44,7 +44,7 @@ class BayesianOptimization:
         sampled_points = set()
 
         for _ in range(iterations):
-            X_next, EI = self.acquisition()
+            X_next, _ = self.acquisition()
             X_next_str = str(X_next)
 
             if X_next_str not in sampled_points:
