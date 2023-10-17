@@ -50,6 +50,6 @@ class BayesianOptimization:
             self.gp.update(next_sample, next_output)
             self.sampled_points.add(next_sample_tuple)
 
-        X_opt = np.array(next_sample)
-        Y_opt = np.array(next_output)
+        X_opt = np.around(next_sample, decimals=7)
+        Y_opt = np.around(next_output, decimals=7)
         return X_opt, Y_opt
