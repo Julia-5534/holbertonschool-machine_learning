@@ -53,6 +53,6 @@ class BayesianOptimization:
         # After all iterations, or if optimization stopped early,
         # return the optimal point and its function value
         X_opt = self.gp.X[np.argmin(self.gp.Y)]
-        Y_opt = np.min(self.gp.Y)
+        Y_opt = [np.min(self.gp.Y)]
 
         return X_opt, Y_opt
