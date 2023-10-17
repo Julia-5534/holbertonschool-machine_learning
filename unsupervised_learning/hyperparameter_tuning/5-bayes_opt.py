@@ -16,6 +16,7 @@ class BayesianOptimization:
         self.X_s = np.linspace(bounds[0], bounds[1], ac_samples).reshape(-1, 1)
         self.xsi = xsi
         self.minimize = minimize
+        self.sampled_points = set()
 
     def acquisition(self):
         """Calculates acquisition function values for
@@ -42,17 +43,13 @@ class BayesianOptimization:
         updates the Gaussian process with the new sample."""
         for _ in range(iterations):
             next_sample, _ = self.acquisition()
-            if np.any(np.isclose(self.gp.X, next_sample)):
-                continue
-            else:
+            next_sample_tuple = tuple(next_sample)
+            if next_sample_tuple in self.sampled_points:
                 break
+            next_output = self.f(next_sample)
+            self.gp.update(next_sample, next_output)
+            self.sampled_points.add(next_sample_tuple)
 
-        next_output = self.f(next_sample)
-        self.gp.update(next_sample, next_output)
-
-        # After all iterations, or if optimization stopped early,
-        # return the optimal point and its function value
-        X_opt = self.gp.X[np.argmin(self.gp.Y)]
-        Y_opt = [np.min(self.gp.Y)]
-
+        X_opt = np.array(next_sample)
+        Y_opt = np.array(next_output)
         return X_opt, Y_opt
