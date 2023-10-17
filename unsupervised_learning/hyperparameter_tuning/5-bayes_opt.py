@@ -58,4 +58,6 @@ class BayesianOptimization:
             else:
                 break
 
+        self.gp.X = self.gp.X[:-1]
+
         return X_opt, Y_opt
