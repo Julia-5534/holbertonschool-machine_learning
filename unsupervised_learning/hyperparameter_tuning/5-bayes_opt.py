@@ -16,7 +16,6 @@ class BayesianOptimization:
         self.X_s = np.linspace(bounds[0], bounds[1], ac_samples).reshape(-1, 1)
         self.xsi = xsi
         self.minimize = minimize
-        self.sampled_points = set()
 
     def acquisition(self):
         """Calculates acquisition function values for
@@ -41,15 +40,22 @@ class BayesianOptimization:
         """Finds next sample point by maxing (or min-ing) the acquire
         function and evaluates the black-box function at this point and
         updates the Gaussian process with the new sample."""
-        for _ in range(iterations):
-            next_sample, _ = self.acquisition()
-            next_sample_tuple = tuple(next_sample)
-            if next_sample_tuple in self.sampled_points:
-                break
-            next_output = self.f(next_sample)
-            self.gp.update(next_sample, next_output)
-            self.sampled_points.add(next_sample_tuple)
+        X_opt = Y_opt = None
+        sampled_points = set()
 
-        X_opt = np.around(next_sample, decimals=7)
-        Y_opt = np.around(next_output, decimals=7)
+        for _ in range(iterations):
+            X_next, EI = self.acquisition()
+            X_next_str = str(X_next)
+
+            if X_next_str not in sampled_points:
+                Y_new = self.f(X_next)
+                sampled_points.add(X_next_str)
+
+                if Y_opt is None or Y_new < Y_opt:
+                    X_opt, Y_opt = X_next, Y_new
+
+                self.gp.update(X_next, Y_new)
+            else:
+                break
+
         return X_opt, Y_opt
