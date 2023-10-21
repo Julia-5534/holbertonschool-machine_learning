@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Task 1"""
+"""Task 2"""
 
 import tensorflow.keras as keras
 
