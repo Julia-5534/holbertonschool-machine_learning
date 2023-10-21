@@ -2,7 +2,7 @@
 """Task 0"""
 
 # Import necessary libraries
-from tensorflow.keras import keras
+import tensorflow.keras as keras
 
 
 # Define the function to create an autoencoder
