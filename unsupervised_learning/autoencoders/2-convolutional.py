@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Task 2"""
 
+import tensorflow as tf
 import tensorflow.keras as keras
 
 
@@ -98,7 +99,8 @@ def autoencoder(input_dims, filters, latent_dims):
     auto = keras.Model(input_layer, autoencoder_output)
 
     # Compile autoencoder model with Adam optimization & Binary Crossentropy
-    auto.compile(optimizer='Adam', loss='binary_crossentropy')
+    auto.compile(optimizer=tf.optimizers.Adam(),
+                 loss=tf.losses.binary_crossentropy)
 
     # Return the encoder, decoder, and the sparse autoencoder models
     return encoder, decoder, auto
