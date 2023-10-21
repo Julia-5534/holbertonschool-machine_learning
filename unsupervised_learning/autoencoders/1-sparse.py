@@ -29,7 +29,7 @@ def autoencoder(input_dims, hidden_layers, latent_dims, lambtha):
     - auto (keras.Model): The full sparse autoencoder model that combines
       the encoder and decoder.
 
-    This function defines and returns a sparse autoencoder model, which consists
+    This function defines & returns a sparse autoencoder model, which consists
     of an encoder and a decoder. The encoder takes the input data and maps
     it to a lower-dimensional latent space, while the decoder maps data from
     the latent space back to the original input space, aiming to reconstruct
@@ -55,7 +55,8 @@ def autoencoder(input_dims, hidden_layers, latent_dims, lambtha):
         x = keras.layers.Dense(n, activation='relu')(x)
     # Latent layer with L1 regularization
     encodeD = keras.layers.Dense(latent_dims, activation='relu',
-                                 activity_regularizer=keras.regularizers.l1(lambtha))(x)
+                                 activity_regularizer=keras.regularizers.l1(
+                                   lambtha))(x)
 
     # Create an encoder model that maps the input to the latent space
     encoder = keras.Model(input_layer, encodeD)
