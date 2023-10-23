@@ -61,7 +61,8 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
         mean_log, log_var = args
         batch = tf.shape(mean_log)[0]
         dim = tf.shape(mean_log)[1]
-        epsilon = tf.keras.backend.random_normal(shape=(batch, dim), mean=0.0, stddev=1.0)
+        epsilon = tf.keras.backend.random_normal(
+          shape=(batch, dim), mean=0.0, stddev=1.0)
         return mean_log + tf.exp(0.5 * log_var) * epsilon
     bridge = tf.keras.layers.Lambda(sampling)([mean_log, log_var])
 
