@@ -29,8 +29,9 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
         dim = tf.shape(mean_log)[1]
         epsilon = tf.keras.backend.random_normal(
           shape=(batch, dim), mean=0.0, stddev=1.0)
-        return mean_log + tf.exp(0.5 * log_var) * epsilon
-    bridge = tf.keras.layers.Lambda(sampling)([mean_log, log_var])
+        return mean_log + tf.exp(log_var / 2) * epsilon
+    bridge = tf.keras.layers.Lambda(
+        sampling, output_shape=(latent_dims))([mean_log, log_var])
 
     # Create an encoder model that maps the input to the latent space
     encoder = keras.Model(inputs, [bridge, mean_log, log_var], name="encoder")
