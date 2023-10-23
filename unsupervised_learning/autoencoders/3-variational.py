@@ -53,21 +53,20 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
         x = keras.layers.Dense(n, activation='relu')(x)
 
     # Latent layer, the bottleneck of the autoencoder
-    mean_log = keras.layers.Dense(latent_dims)(x)
-    log_var = keras.layers.Dense(latent_dims)(x)
+    mean_log = keras.layers.Dense(latent_dims, activation=None)(x)
+    log_var = keras.layers.Dense(latent_dims, activation=None)(x)
 
     # Reparameterization trick
     def sampling(args):
         mean_log, log_var = args
         batch = tf.shape(mean_log)[0]
         dim = tf.shape(mean_log)[1]
-        epsilon = tf.keras.backend.random_normal(shape=(batch, dim))
+        epsilon = tf.keras.backend.random_normal(shape=(batch, dim), mean=0.0, stddev=1.0)
         return mean_log + tf.exp(0.5 * log_var) * epsilon
-
     bridge = tf.keras.layers.Lambda(sampling)([mean_log, log_var])
 
     # Create an encoder model that maps the input to the latent space
-    encoder = keras.Model(inputs, [mean_log, log_var, bridge], name="encoder")
+    encoder = keras.Model(inputs, [bridge, mean_log, log_var], name="encoder")
 
     # Decoder network
     latent_inputs = keras.layers.Input(shape=(latent_dims,))
@@ -82,13 +81,8 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     decoder = keras.Model(latent_inputs, outputs, name="decoder")
 
     # Combine the encoder and decoder to create the full autoencoder model
-    outputs = decoder(encoder(inputs)[2])
-    auto = keras.Model(inputs, outputs, name="vae_mlp")
-
-    # Add KL divergence regularization loss and compile model
-    kl_loss = -0.5 * tf.reduce_sum(
-      1 + log_var - tf.square(mean_log) - tf.exp(log_var))
-    auto.add_loss(tf.reduce_mean(kl_loss) / input_dims)
+    outputs = decoder(encoder(inputs)[0])
+    auto = keras.Model(inputs, outputs, name="vae")
 
     # Compile autoencoder model with Adam optimization & Binary Crossentropy
     auto.compile(optimizer='adam', loss='binary_crossentropy')
