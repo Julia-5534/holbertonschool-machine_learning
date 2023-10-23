@@ -26,12 +26,11 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     def sampling(args):
         mean_log, log_var = args
         batch = tf.shape(mean_log)[0]
-        dim = tf.shape(mean_log)[1]
         epsilon = tf.keras.backend.random_normal(
-          shape=(batch, dim), mean=0.0, stddev=1.0)
+          shape=(batch, latent_dims), mean=0.0, stddev=1.0)
         return mean_log + tf.exp(log_var / 2) * epsilon
     bridge = tf.keras.layers.Lambda(
-        sampling, output_shape=(latent_dims))([mean_log, log_var])
+        sampling)([mean_log, log_var])
 
     # Create an encoder model that maps the input to the latent space
     encoder = keras.Model(inputs, [bridge, mean_log, log_var])
@@ -52,17 +51,7 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     outputs = decoder(encoder(inputs)[0])
     auto = keras.Model(inputs, outputs)
 
-    # Define VAE loss
-    reconstruction_loss = keras.losses.binary_crossentropy(inputs, outputs)
-    reconstruction_loss *= input_dims
-    kl_loss = 1 + log_var - tf.square(mean_log) - tf.exp(log_var)
-    kl_loss = tf.reduce_sum(kl_loss, axis=-1)
-    kl_loss *= -0.5
-    vae_loss = tf.reduce_mean(reconstruction_loss + kl_loss)
-
-    # Compile autoencoder model with Adam optimization & VAE loss
-    auto.add_loss(vae_loss)
-    auto.compile(optimizer='adam')
+    auto.compile(optimizer='adam', loss='binary_crossentropy')
 
     # Return the encoder, decoder, and full autoencoder models
     return encoder, decoder, auto
