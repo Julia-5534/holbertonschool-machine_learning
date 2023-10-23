@@ -26,6 +26,9 @@ def autoencoder(input_dims, filters, latent_dims):
         x = keras.layers.Conv2D(f, (3, 3),
                                 activation='relu',
                                 padding='valid')(x)
+        x = keras.layers.Conv2D(f, (3, 3),
+                                activation='relu',
+                                padding='valid')(x)
       else:
         x = keras.layers.Conv2D(f, (3, 3),
                                 activation='relu',
