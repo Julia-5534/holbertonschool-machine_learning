@@ -11,7 +11,7 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     and feature learning.
     """
     # Input layer that takes data with 'input_dims' features
-    inputs = keras.layers.Input(shape=(input_dims,))
+    inputs = keras.layers.Input(shape=(input_dims))
 
     # Encoder network
     x = inputs
