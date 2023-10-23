@@ -96,8 +96,8 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     # Compile autoencoder model with Adam optimization & VAE loss
     auto.add_loss(vae_loss)
 
-    # Compile autoencoder model with Adam optimization & Binary Crossentropy
-    auto.compile(optimizer='adam', loss='binary_crossentropy')
+    # Compile autoencoder model with Adam optimization
+    auto.compile(optimizer='adam')
 
     # Return the encoder, decoder, and full autoencoder models
     return encoder, decoder, auto
