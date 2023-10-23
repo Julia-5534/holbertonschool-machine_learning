@@ -21,19 +21,23 @@ def autoencoder(input_dims, filters, latent_dims):
     x = decoder_input
 
     # Decoder
-    for i, f in enumerate(reversed(filters)):
-      if i == 0:
-        x = keras.layers.Conv2D(f, (3, 3),
-                                activation='relu',
-                                padding='valid')(x)
-      else:
-        x = keras.layers.Conv2D(f, (3, 3),
-                                activation='relu',
-                                padding='same')(x)
+    for f in reversed(filters[:-1]):
+      x = keras.layers.Conv2D(f, (3, 3),
+                              activation='relu',
+                              padding='same')(x)
       x = keras.layers.UpSampling2D((2, 2))(x)
-    x = keras.layers.Conv2D(1, (3, 3),
+
+    # Second to last Conv layer with 'valid' padding
+    x = keras.layers.Conv2D(filters[0], (3, 3),
+                            activation='relu',
+                            padding='valid')(x)
+    x = keras.layers.UpSampling2D((2, 2))(x)
+
+    # Last Conv layer
+    x = keras.layers.Conv2D(input_dims[-1], (3, 3),
                             activation='sigmoid',
                             padding='same')(x)
+
 
     # Create Decoder
     decoder = keras.Model(decoder_input, x)
