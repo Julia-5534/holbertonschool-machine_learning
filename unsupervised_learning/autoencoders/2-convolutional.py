@@ -47,7 +47,7 @@ def autoencoder(input_dims, filters, latent_dims):
     the sigmoid activation function for output reconstruction.
     """
     # Input layer that takes data with 'input_dims' features
-    input_layer = keras.layers.Input(shape=(input_dims,))
+    input_layer = keras.Input(shape=(input_dims))
 
     # Encoder network
     x = input_layer
@@ -56,11 +56,7 @@ def autoencoder(input_dims, filters, latent_dims):
         x = keras.layers.Conv2D(f, (3, 3),
                                 activation='relu',
                                 padding='same')(x)
-        x = keras.layers.MaxPooling2D((2, 2), padding='same')
-
-    target_shape_after_flattening = keras.backend.int_shape(x)
-    # Flatten the 2D feature maps into a 1D vector
-    x = keras.layers.Flatten()(x)
+        x = keras.layers.MaxPooling2D((2, 2))(x)
 
     # Create a dense layer for the latent space
     encodeD = keras.layers.Dense(latent_dims, activation='relu')(x)
