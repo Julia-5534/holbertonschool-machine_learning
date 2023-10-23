@@ -15,7 +15,7 @@ def autoencoder(input_dims, filters, latent_dims):
                               padding='same')(x)
       x = keras.layers.MaxPooling2D((2, 2), padding='same')(x)
       
-    encoder_output = x
+    encoder = keras.Model(input_layer, x)
       
     decoder_input = keras.layers.Input(shape=latent_dims)
     x = decoder_input
@@ -42,13 +42,12 @@ def autoencoder(input_dims, filters, latent_dims):
                                          activation='sigmoid',
                                          padding='same')(x)
 
-    #Create Encoder
-    encoder = keras.Model(input_layer, encoder_output)
+
     # Create Decoder
-    decoder = keras.Model(decoder_input, decoder_output)
+    decoder = keras.Model(decoder_output, x)
 
     #Create Autoencoder
-    auto = keras.Model(input_layer, decoder(encoder(encoder_output)))
+    auto = keras.Model(input_layer, decoder(encoder(input_layer)))
 
     # Compile model
     auto.compile(optimizer='adam', loss='binary_crossentropy')
