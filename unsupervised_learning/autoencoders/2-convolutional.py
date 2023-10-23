@@ -14,7 +14,9 @@ def autoencoder(input_dims, filters, latent_dims):
                               activation='relu',
                               padding='same')(x)
       x = keras.layers.MaxPooling2D((2, 2))(x)
-      encoder_output = x
+      
+    x = keras.layers.MaxPooling2D((2, 2))(x)
+    encoder_output = x
       
     encoder = keras.Model(input_layer, encoder_output)
       
