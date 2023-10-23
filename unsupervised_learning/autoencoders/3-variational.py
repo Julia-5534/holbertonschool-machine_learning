@@ -87,7 +87,7 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
 
     # Add KL divergence regularization loss and compile model
     kl_loss = -0.5 * tf.reduce_sum(
-      log_var - tf.square(mean_log) - tf.exp(log_var) + 1)
+      1 + log_var - tf.square(mean_log) - tf.exp(log_var))
     auto.add_loss(tf.reduce_mean(kl_loss) / input_dims)
 
     # Compile autoencoder model with Adam optimization & Binary Crossentropy
