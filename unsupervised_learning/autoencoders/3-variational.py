@@ -34,7 +34,7 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
         sampling, output_shape=(latent_dims))([mean_log, log_var])
 
     # Create an encoder model that maps the input to the latent space
-    encoder = keras.Model(inputs, [bridge, mean_log, log_var], name="encoder")
+    encoder = keras.Model(inputs, [bridge, mean_log, log_var])
 
     # Decoder network
     latent_inputs = keras.layers.Input(shape=(latent_dims,))
@@ -46,11 +46,11 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     outputs = keras.layers.Dense(input_dims, activation='sigmoid')(x)
 
     # Create a decoder that maps the latent space to the output
-    decoder = keras.Model(latent_inputs, outputs, name="decoder")
+    decoder = keras.Model(latent_inputs, outputs)
 
     # Combine the encoder and decoder to create the full autoencoder model
     outputs = decoder(encoder(inputs)[0])
-    auto = keras.Model(inputs, outputs, name="vae")
+    auto = keras.Model(inputs, outputs)
 
     # Define VAE loss
     reconstruction_loss = keras.losses.binary_crossentropy(inputs, outputs)
