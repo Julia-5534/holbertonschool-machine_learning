@@ -18,16 +18,13 @@ def rnn(rnn_cell, X, h_0):
         H (np.ndarray): All hidden states with shape (t, m, h).
         Y (np.ndarray): All outputs with shape (t, m, o).
     """
-    t, m, i = X.shape
+    t = X.shape[0]
+    m = X.shape[1]
     h = h_0.shape[1]
     H = np.zeros((t + 1, m, h))
     Y = np.zeros((t, m, rnn_cell.Wy.shape[1]))
-    h_t = h_0
 
     for step in range(t):
-        x_t = X[step]
-        h_t, y_t = rnn_cell.forward(h_t, x_t)
-        H[step] = h_t
-        Y[step] = y_t
+        H[step + 1], Y[step] = rnn_cell.forward(H[step], X[step])
 
     return H, Y
