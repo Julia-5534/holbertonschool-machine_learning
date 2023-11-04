@@ -9,7 +9,8 @@ def rnn(rnn_cell, X, h_0):
     Perform forward propagation for a simple RNN.
 
     Args:
-        rnn_cell (RNNCell): An instance of the RNNCell to be used for forward propagation.
+        rnn_cell (RNNCell): An instance of the RNNCell to be
+        used for forward propagation.
         X (np.ndarray): The input data with shape (t, m, i).
         h_0 (np.ndarray): The initial hidden state with shape (m, h).
 
@@ -20,7 +21,7 @@ def rnn(rnn_cell, X, h_0):
     t, m, i = X.shape
     h = h_0.shape[1]
     H = np.zeros((t + 1, m, h))
-    Y = np.zeros((t, m, rnn_cell.o))
+    Y = np.zeros((t, m, rnn_cell.Wy.shape[1]))
     h_t = h_0
 
     for step in range(t):
