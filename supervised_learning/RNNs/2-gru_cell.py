@@ -36,8 +36,9 @@ class GRUCell:
         self.br = np.zeros((1, h))
         self.bh = np.zeros((1, h))
         self.by = np.zeros((1, o))
-    
+
     def sigmoid(self, x):
+        """Sigmoid Function"""
         return 1 / (1 + np.exp(-x))
 
     def forward(self, h_prev, x_t):
