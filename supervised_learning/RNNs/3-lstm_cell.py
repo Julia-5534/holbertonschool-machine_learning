@@ -46,20 +46,25 @@ class LSTMCell:
         return 1 / (1 + np.exp(-x))
 
     def forward(self, h_prev, c_prev, x_t):
-        """Performs forward propagation for one time
-        step of the LSTMCell.
+        """Performs forward propagation for one time step of the LSTMCell.
 
         Args:
-        h_prev (np.ndarray): The previous hidden state.
-        x_t (np.ndarray): The data input for the current time step.
+            h_prev (np.ndarray): The previous hidden state.
+            c_prev (np.ndarray): The previous cell state.
+            x_t (np.ndarray): The data input for the current time step.
 
         Returns:
-        h_next (np.ndarray): The next hidden state.
-        y (np.ndarray): The output of the cell.
+            h_next (np.ndarray): The next hidden state.
+            c_next (np.ndarray): The next cell state.
+            y (np.ndarray): The output of the cell.
         """
         concat = np.concatenate((h_prev, x_t), axis=1)
-        h_next = np.tanh(np.dot(concat, self.Wf) + self.bf)
-        c_next = np.tanh(np.dot(concat, self.Wc) + self.bc)
+        f_t = self.sigmoid(np.dot(concat, self.Wf) + self.bf)
+        u_t = self.sigmoid(np.dot(concat, self.Wu) + self.bu)
+        c_t = np.tanh(np.dot(concat, self.Wc) + self.bc)
+        c_next = f_t * c_prev + u_t * c_t
+        o_t = self.sigmoid(np.dot(concat, self.Wo) + self.bo)
+        h_next = o_t * np.tanh(c_next)
         y = np.dot(h_next, self.Wy) + self.by
         y = np.exp(y) / np.sum(np.exp(y), axis=1, keepdims=True)
 
