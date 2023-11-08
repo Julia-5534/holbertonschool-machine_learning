@@ -50,18 +50,18 @@ class BidirectionalCell:
         h_next = np.tanh(np.dot(concat, self.Whf) + self.bhf)
 
         return h_next
-    
+
     def backward(self, h_next, x_t):
         """Calculates the hidden state in the backward
         direction for one time step.
-        
+
         Args:
             h_next (np.ndarray): The next hidden state.
             x_t (np.ndarray): Contains the input data for the cell.
-            
+
         Returns:
             h_pev: The previous hidden state"""
         concat = np.concatenate((h_next, x_t), axis=1)
         h_pev = np.tanh(np.dot(concat, self.Whb) + self.bhb)
-        
+
         return h_pev
