@@ -15,8 +15,8 @@ def bi_rnn(bi_cell, X, h_0, h_t):
         h_t (np.ndarray): Initial hidden state in the backward direction.
 
     Returns:
-        H, Y: Tuple containing all the concatenated hidden
-        states and all the outputs.
+        H (np.ndarray): Contains all of the concatenated hidden states.
+        Y (np.ndarray): Contains all of the outputs.
     """
     t, m, i = X.shape
     _, h = h_0.shape
