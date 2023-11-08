@@ -45,7 +45,6 @@ class BidirectionalCell:
 
         Returns:
             h_next (np.ndarray): The next hidden state.
-            y (np.ndarray): The output.
         """
         concat = np.concatenate((h_prev, x_t), axis=1)
         h_next = np.tanh(np.dot(concat, self.Whf) + self.bhf)
