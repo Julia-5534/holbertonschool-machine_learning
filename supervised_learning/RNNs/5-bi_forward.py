@@ -31,7 +31,7 @@ class BidirectionalCell:
 
         self.Whf = np.random.normal(size=(h + i, h))
         self.Whb = np.random.normal(size=(h + i, h))
-        self.Wy = np.random.normal(size=(h, o))
+        self.Wy = np.random.normal(size=(2 * h, o))
         self.bhf = np.zeros((1, h))
         self.bhb = np.zeros((1, h))
         self.by = np.zeros((1, o))
