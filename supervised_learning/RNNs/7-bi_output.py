@@ -68,7 +68,7 @@ class BidirectionalCell:
 
     def output(self, H):
         """Calculates all output for Bidirectional RNN.
-        
+
         Args:
             H (np.ndarray): Contains the concatenated hidden states from
             both directions, excluding their initialized states.
