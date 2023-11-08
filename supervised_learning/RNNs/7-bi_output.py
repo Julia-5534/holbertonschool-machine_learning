@@ -75,4 +75,7 @@ class BidirectionalCell:
 
         Returns:
             Y: The output."""
-        return np.dot(H, self.Wy) + self.by
+        pre_actv = np.dot(H, self.Wy) + self.by
+        Y = np.exp(pre_actv) / np.sum(np.exp(pre_actv), axis=2, keepdims=True)
+
+        return Y
