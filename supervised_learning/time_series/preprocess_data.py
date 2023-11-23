@@ -6,6 +6,7 @@ import numpy as np
 
 
 def preprocess_data(file_path):
+    """Preprocesses The Data"""
     # Load the raw dataset
     data = pd.read_csv(file_path)
 
