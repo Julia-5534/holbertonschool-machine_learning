@@ -24,8 +24,8 @@ def bag_of_words(sentences, vocab=None):
       - Fill in the matrix with the word counts.
     """
 
-    words_list = [
-      re.findall(r'\b\w[\w]*\b', sentence.lower()) for sentence in sentences]
+    words_list = [re.findall(r'\b\w[\w]*\b', re.sub(
+      r"'s\b", '', sentence.lower())) for sentence in sentences]
 
     if vocab is None:
         vocab = sorted(set(word for words in words_list for word in words))
