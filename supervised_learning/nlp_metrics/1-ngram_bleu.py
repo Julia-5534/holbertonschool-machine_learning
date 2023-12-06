@@ -3,6 +3,7 @@
 
 from collections import Counter
 import math
+import numpy as np
 
 
 def ngram_bleu(references, sentence, n):
@@ -27,27 +28,30 @@ def ngram_bleu(references, sentence, n):
         average over different n-gram orders.
       - Return the calculated N-gram BLEU score.
     """
+
     precisions = []
     for i in range(1, n + 1):
-        reference_ngrams = Counter()
-        candidate_ngrams = Counter()
+        reference_ngrams = []
+        sentence_ngrams = []
 
-        for reference in references:
-            reference_ngrams.update(
-                zip(*[reference[j:] for j in range(i)]))
+        for ref in references:
+            ref_ngrams = [tuple(ref[j:j + i]) for j in range(len(ref) - i + 1)]
+            reference_ngrams.extend(ref_ngrams)
 
-        candidate_ngrams.update(
-            zip(*[sentence[j:] for j in range(i)]))
+        sentence_ngrams = [
+          tuple(sentence[j:j + i]) for j in range(len(sentence) - i + 1)]
 
-        common_ngrams = candidate_ngrams & reference_ngrams
-        precision = sum(common_ngrams.values()) / max(
-            1, sum(candidate_ngrams.values()))
+        overlap_count = sum(
+          1 for ngram in sentence_ngrams if ngram in reference_ngrams)
 
+        precision = overlap_count / max(len(sentence_ngrams), 1)
         precisions.append(precision)
 
-    brevity_penalty = min(1.0, len(sentence) / min(
-        len(ref) for ref in references))
-    bleu_score = brevity_penalty * math.exp(
-        sum(math.log(p) for p in precisions) / len(precisions))
+    bleu = np.exp(np.sum(np.log(precisions)) / n)
 
+    closest_ref_length = min(
+      references, key=lambda ref: abs(len(ref) - len(sentence)))
+    brevity_penalty = min(1, len(sentence) / len(closest_ref_length))
+
+    bleu_score = brevity_penalty * bleu
     return bleu_score
