@@ -26,6 +26,7 @@ def uni_bleu(references, sentence):
       - Calculate BLEU score using precision values and brevity penalty.
       - Return the calculated BLEU score.
     """
+
     precisions = []
     for i in range(1, 2):
         reference_ngrams = Counter()
@@ -45,10 +46,14 @@ def uni_bleu(references, sentence):
         precisions.append(precision)
 
     reference_lengths = [len(ref) for ref in references]
-    closest_ref_length = min(reference_lengths, key=lambda x: abs(len(sentence) - x))
-    
-    brevity_penalty = min(1.0, len(sentence) / closest_ref_length)
-    
+    closest_ref_length = min(
+      reference_lengths, key=lambda x: abs(len(sentence) - x))
+
+    if len(sentence) < closest_ref_length:
+        brevity_penalty = math.exp(1 - closest_ref_length / len(sentence))
+    else:
+        brevity_penalty = 1.0
+
     bleu_score = brevity_penalty * math.exp(sum(
         math.log(p) for p in precisions) / len(precisions))
 
