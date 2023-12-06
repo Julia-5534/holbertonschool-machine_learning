@@ -35,7 +35,8 @@ def ngram_bleu(references, sentence, n):
         sentence_ngrams = []
 
         for ref in references:
-            ref_ngrams = [tuple(ref[j:j + i]) for j in range(len(ref) - i + 1)]
+            ref_ngrams = [
+              tuple(ref[j:j + i]) for j in range(len(ref) - i + 1)]
             reference_ngrams.extend(ref_ngrams)
 
         sentence_ngrams = [
