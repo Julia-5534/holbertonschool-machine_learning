@@ -44,8 +44,11 @@ def uni_bleu(references, sentence):
 
         precisions.append(precision)
 
-    brevity_penalty = min(1.0, len(sentence) / min(
-        len(ref) for ref in references))
+    reference_lengths = [len(ref) for ref in references]
+    closest_ref_length = min(reference_lengths, key=lambda x: abs(len(sentence) - x))
+    
+    brevity_penalty = min(1.0, len(sentence) / closest_ref_length)
+    
     bleu_score = brevity_penalty * math.exp(sum(
         math.log(p) for p in precisions) / len(precisions))
 
