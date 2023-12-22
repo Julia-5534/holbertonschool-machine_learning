@@ -6,7 +6,7 @@ import numpy as np
 import tensorflow_hub as hub
 from sklearn.metrics.pairwise import cosine_similarity
 
-fetch_answer = __import__('0-qa').fetch_answer
+question_answer = __import__('0-qa').question_answer
 semantic_search = __import__('3-semantic_search').semantic_search
 
 
@@ -37,7 +37,7 @@ def question_answer(corpus_path):
             similar_document = semantic_search(corpus_path, question)
 
             # Fetch the answer using the fetch_answer function
-            answer = fetch_answer(question, similar_document)
+            answer = question_answer(question, similar_document)
 
             # If the answer is empty, print the error message
             if not answer:

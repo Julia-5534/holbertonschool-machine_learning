@@ -6,7 +6,7 @@ import tensorflow_hub as hub
 from transformers import BertTokenizer
 
 
-def fetch_answer(input_question, input_reference):
+def question_answer(input_question, input_reference):
     """
     This function uses a BERT model to answer questions based
     on a reference text.

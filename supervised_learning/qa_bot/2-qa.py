@@ -5,7 +5,7 @@ import tensorflow as tf
 import tensorflow_hub as hub
 from transformers import BertTokenizer
 
-fetch_answer = __import__('0-qa').fetch_answer
+question_answer = __import__('0-qa').question_answer
 
 
 def answer_loop(reference):
@@ -32,7 +32,7 @@ def answer_loop(reference):
                 break
 
             # Fetch the answer using the fetch_answer function
-            answer = fetch_answer(question, reference)
+            answer = question_answer(question, reference)
 
             # If the answer is empty, print the error message
             if not answer:
