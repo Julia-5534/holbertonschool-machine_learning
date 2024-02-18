@@ -1,4 +1,4 @@
-<b>QA Bot</b>
+<b>QA BOT</b>
 <br>
 <br><b>Learning Objectives</b>
 <br>- What is Question-Answering?
